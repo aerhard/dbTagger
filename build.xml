@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+before building, adjust the attribute values of the <property> 
+elements below to your system; in the <project> element, set @default to "dist-oxy" 
+to write to the to the oxygen project folder as well as to the dist folder in the 
+current project; set @default to "dist" to only write to the dist folder.
+-->
+<project basedir="." default="dist-oxy" name="dbTagger">
+
+	<property name="java6.boot.classpath" location="C:/Program Files/Java/jdk1.6.0_45/jre/lib/rt.jar" />
+	<property name="oxygen.dir" location="/Program Files/Oxygen XML Editor 14" />
+	<property name="plugin.dir" location="${oxygen.dir}/plugins/dbTagger" />
+
+	<target name="clean">
+		<delete dir="dist" />
+		<delete dir="classes" />
+	</target>
+
+	<target name="dist" depends="clean, root, jars" />
+
+	<target name="clean-oxy">
+		<delete dir="${plugin.dir}" />
+	</target>
+
+	<target name="dist-oxy" depends="clean-oxy, dist">
+		<mkdir dir="${plugin.dir}" />
+		<copy todir="${plugin.dir}">
+			<fileset dir="dist/dbTagger">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="root">
+		<mkdir dir="dist/dbTagger" />
+		<copy todir="dist/dbTagger">
+			<fileset dir="plugin-config">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="compile">
+		<mkdir dir="classes" />
+		<javac srcdir="src" bootclasspath="${java6.boot.classpath}" destdir="classes" source="1.6" target="1.6" encoding="cp1252" includeantruntime="false" debug="on">
+			<classpath>
+				<fileset dir="${oxygen.dir}/lib">
+					<include name="*.*" />
+				</fileset>
+				<fileset dir="lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jars" depends="compile">
+		<mkdir dir="dist/dbTagger/lib" />
+		<jar destfile="dist/dbTagger/lib/dbtagger.jar" basedir="classes" />
+		<copy todir="dist/dbTagger/lib">
+			<fileset dir="lib">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<delete dir="classes" />
+	</target>
+
+</project>
