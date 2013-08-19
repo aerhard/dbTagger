@@ -9,7 +9,7 @@ current project; set @default to "dist" to only write to the dist folder.
 <project basedir="." default="dist-oxy" name="dbTagger">
 
 	<property name="java6.boot.classpath" location="C:/Program Files/Java/jdk1.6.0_45/jre/lib/rt.jar" />
-	<property name="oxygen.dir" location="/Program Files/Oxygen XML Editor 14" />
+	<property name="oxygen.dir" location="/Program Files/Oxygen XML Editor 15" />
 	<property name="plugin.dir" location="${oxygen.dir}/plugins/dbTagger" />
 
 	<target name="clean">

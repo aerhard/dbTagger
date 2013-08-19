@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -64,7 +66,8 @@ public class DataChooser extends OKCancelDialog {
 	 * @param selection
 	 *            The current selection in the editor document.
 	 * @param prefsSet
-	 *            The preferences string array used to configure the http request.
+	 *            The preferences string array used to configure the http
+	 *            request.
 	 * @throws Exception
 	 */
 	public DataChooser(StandalonePluginWorkspace workspaceParam,
@@ -75,7 +78,7 @@ public class DataChooser extends OKCancelDialog {
 
 		this.workspace = workspaceParam;
 		this.prefsSet = prefsSet;
-		this.dataLoader = new DataLoader(workspace); 
+		this.dataLoader = new DataLoader(workspace);
 
 		// Search field in north pane
 		JPanel searchPane = new JPanel(new GridBagLayout());
@@ -100,6 +103,16 @@ public class DataChooser extends OKCancelDialog {
 					e1.printStackTrace();
 				}
 				tableModel.fireTableDataChanged();
+			}
+		});
+		searchField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				selectSearchFieldText(true);
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				selectSearchFieldText(false);
 			}
 		});
 		searchPane.add(searchField, c);
@@ -134,18 +147,28 @@ public class DataChooser extends OKCancelDialog {
 		loadTableModelData(selection);
 	}
 
+	private void selectSearchFieldText(boolean focus) {
+		if (focus) {
+			searchField.select(0, searchField.getText().length());
+		} else {
+			searchField.select(0, 0);
+		}
+	}
+
 	/**
 	 * Sets the table model and rendering.
 	 * 
-	 * @param searchString The search results data to be passed the table model.
-	 * @throws Exception 
+	 * @param searchString
+	 *            The search results data to be passed the table model.
+	 * @throws Exception
 	 */
 	private void loadTableModelData(String searchString) throws Exception {
-		
-		String[][] searchResults = this.dataLoader.getArray(prefsSet, searchString);
+
+		String[][] searchResults = this.dataLoader.getArray(prefsSet,
+				searchString);
 		if (searchResults == null)
 			throw new Exception("");
-		
+
 		tableModel = new DefaultTableModel(searchResults, columnNames) {
 			private static final long serialVersionUID = 1L;
 
@@ -168,10 +191,7 @@ public class DataChooser extends OKCancelDialog {
 
 		searchResultsTable
 				.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		if (searchResultsTable.getRowCount() > 0) {
-			searchResultsTable.setRowSelectionInterval(0, 0);
-			searchResultsTable.requestFocus();
-		}
+		selectSearchFieldText(true);
 		// key column width
 		searchResultsTable.getColumnModel().getColumn(0).setMaxWidth(50);
 	};

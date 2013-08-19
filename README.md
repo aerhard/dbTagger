@@ -58,8 +58,3 @@ Examples:
 * &lt;rs type="person" key="${key}"&gt;${selection}&lt;/rs&gt; - will surround the selected text
 * &lt;repository key="${key}"&gt;${text}&lt;/repository&gt; - will replace the selected text
 
-
-Development
------------
-
-Clone the repository; adjust the build path to point to three jars in the "lib" folder of your oXygen installation: oxygen, commons-codec and jide, finally include jsoup from the "lib" folder of the project. 

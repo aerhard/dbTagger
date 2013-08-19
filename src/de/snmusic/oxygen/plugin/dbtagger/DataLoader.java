@@ -16,13 +16,14 @@
 
 package de.snmusic.oxygen.plugin.dbtagger;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -77,42 +78,22 @@ public class DataLoader {
 	
 	/**
 	 * Performs an http get request and returns the results string.
-	 * 
-	 * @param user
-	 *            Username
-	 * @param password
-	 *            Password
-	 * @param urlStatic
-	 *            The static part of the url (without the search string).
-	 * @param searchString
-	 *            The string to be passed to the server as last part of the url.
-	 * @return
-	 * @throws Exception
 	 */
 	public static String getHtmlString(String user, String password,
 			String urlStatic, String searchString) throws Exception {
-
-		URL url = new URL(urlStatic
-				+ URLEncoder.encode(searchString, "UTF-8"));
-
-		String authString = user + ":" + password;
-
-		byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
-		String authStringEnc = new String(authEncBytes);
-
-		URLConnection urlConnection;
-		urlConnection = url.openConnection();
-		urlConnection.setRequestProperty("Authorization", "Basic "
-				+ authStringEnc);
-		InputStream is = urlConnection.getInputStream();
-		InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-		int numCharsRead;
-		char[] charArray = new char[1024];
-		StringBuffer sb = new StringBuffer();
-		while ((numCharsRead = isr.read(charArray)) > 0) {
-			sb.append(charArray, 0, numCharsRead);
+		String response = "";
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+			HttpGet httpPost = new HttpGet(urlStatic
+					+ URLEncoder.encode(searchString, "UTF-8"));
+			httpPost.addHeader(BasicScheme.authenticate(
+					 new UsernamePasswordCredentials(user, password),
+					 "UTF-8", false));
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+	        response = httpclient.execute(httpPost, responseHandler);
+		} finally {
+			httpclient.getConnectionManager().shutdown();
 		}
-		return sb.toString();
-
+		return response;
 	};
-}
+	}

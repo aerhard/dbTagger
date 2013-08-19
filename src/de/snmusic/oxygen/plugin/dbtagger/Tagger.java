@@ -44,7 +44,7 @@ public class Tagger {
 	 */
 	public void dispatchProcessing() {
 
-		WSEditorPage currentPage = workspace.getCurrentEditorAccess(
+		WSEditorPage currentPage = (workspace).getCurrentEditorAccess(
 				StandalonePluginWorkspace.MAIN_EDITING_AREA).getCurrentPage();
 
 		if (currentPage != null) {
