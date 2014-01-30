@@ -3,8 +3,8 @@
     id="de.snmusic.oxygen.plugin.dbtagger">
    <!-- update_site="http://xxx/Addons/optional/updateSite.xml"
     <xt:location href="WorkspaceAccess_v14.2.0.jar"/>-->
-    <xt:version>1.0</xt:version>
-    <xt:oxy_version>14.1+</xt:oxy_version>
+    <xt:version>1.1</xt:version>
+    <xt:oxy_version>15.0+</xt:oxy_version>
     <xt:type>plugin</xt:type>
     <xt:author>Alexander Erhard</xt:author>
     <xt:name>dbTagger</xt:name>

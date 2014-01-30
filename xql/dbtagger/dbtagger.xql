@@ -1,94 +1,118 @@
-xquery version "1.0";
+xquery version "3.0";
 
-(:
-import module namespace al = "prefs" at "xmldb:exist:///db/apps/adb/modules/prefs.xq";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace json="http://www.json.org";
+
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare option output:method "json";
+declare option output:media-type "application/json";
+
+
+declare variable $coll 				as xs:string 	:= request:get-parameter('coll', '');
+declare variable $q 					as xs:string 	:= request:get-parameter('q', '');
+declare variable $luceneOptions 	as node()		:= <options>
+																		<default-operator>and</default-operator>
+																		<leading-wildcard>yes</leading-wildcard>
+																	</options>;
+declare variable $queryPath		as xs:string	:=	'/db/test';
+
+
+(:~
+~ Static three-columns demo response
 :)
+declare function local:demoResponse () as node() {
 
-declare option exist:serialize 'indent=no'; 
+	<response>
+		<cols>
+			<name>Key</name>
+		</cols>
+		<cols>
+			<name>Name</name>
+		</cols>
+		<cols>
+			<name>Description</name>
+		</cols>
+		<data json:array="true">
+			<json:value>0</json:value>
+			<json:value>This is a static demo server response, {xmldb:get-current-user()}.</json:value>
+			<json:value>param "coll"="{$coll}", param "q"="{$q}"</json:value>
+		</data>
+		<data json:array="true">
+			<json:value>1</json:value>
+			<json:value>Mottl</json:value>
+			<json:value>Dirigent</json:value>
+		</data>
+		<data json:array="true">
+			<json:value>2</json:value>
+			<json:value>Singer</json:value>
+			<json:value>Kopist</json:value>
+		</data>
+		<data json:array="true">
+			<json:value>3</json:value>
+			<json:value>Bla</json:value>
+			<json:value>x</json:value>
+		</data>
 
-declare variable $coll := request:get-parameter('coll', '');
-declare variable $q := request:get-parameter('q', '');
+	</response>
 
-(: ******** demo server response ******** :)
-(::)
-<table>
-	<tr>
-		<td>key-0</td>
-		<td>This is a demo server response not performing a real database search.</td>
-	</tr>
-	<tr>
-		<td>key-1</td>
-		<td>User: {xmldb:get-current-user()}, get parameter "coll": "{$coll}", get parameter "q": "{$q}"</td>
-	</tr>
-		<tr>
-		<td>key-2</td>
-		<td>(You can customize the search parameters in the plugin's user preferences dialog.)</td>
-	</tr>
-	<tr>
-		<td>key-3</td>
-		<td>(To set up a database search, modify dbtagger.xql in eXist or change the request path in the plugin's user preferences to call your own script.)</td>
-	</tr>
-	<tr>
-		<td>key-4</td>
-		<td>(Double click on an item in this list or press "Enter" to insert a document fragment generated from the selected item.)</td>
-	</tr>
-	<tr>
-		<td>key-5</td>
-		<td>(To change the way items get inserted, modify the insertion templates in the user preferences dialog.)</td>
-	</tr>
-	<tr>
-		<td>key-6</td>
-		<td>description-6</td>
-	</tr>
-	<!-- etc. -->
-</table>
+};
 
 
+(:~
+~ Test: Empty results
+:)
+declare function local:demoResponse1 () as node() {
+
+	<response>
+		<cols>
+			<name>Key</name>
+		</cols>
+		<cols>
+			<name>Name</name>
+		</cols>
+		<cols>
+			<name>Description</name>
+		</cols>
+	</response>
+
+};
 
 
+(:~
+~ Test: Throw a server exception
+:)
+declare function local:demoResponse2 () as node() { '' };
 
-(:
-declare function local:returnPersons ($q as xs:string) as item()* {
+
+(:~
+~ Example database query (two-column server response)
+:)
+declare function local:query () as node()* {
+
 	let $hits := 
-		if ($q='') 
+		if ($q='' or $coll='') 
 		then () 
-		else collection($al:qpfadper)//doc[ft:query(., $q, $al:luceneopt)]
+		else collection($queryPath)/tei:TEI[ft:query(., $q, $luceneOptions)]
 	return
-		element table {
+		element response {
+			for $colName in ('Key', 'Name')
+			return
+				<cols>
+					<name>{$colName}</name>
+				</cols>
+			,		
 			for $i in $hits 
 			return
-			<tr>
-				<td>{substring-before(util:document-name($i), '.')}</td>
-				<td>{$i//name/text()}</td>
-				<td/>
-			</tr>
+				<data json:array="true">
+					<json:value>{substring-before(util:document-name($i), '.')}</json:value>
+					<json:value>{($i//tei:persName)[1]/text()}</json:value>
+				</data>
 		}
+		
 };
 
-declare function local:returnRepos ($q as xs:string) as item()* {
-	let $hits := 
-		if ($q = "")
-		then
-			doc($al:instdatei)/institutionen/institution[not(name="")] 
-		else
-			doc($al:instdatei)/institutionen/institution[contains(./name, $q) or contains(./ort, $q)]
-	return
-		element table {
-			for $i in $hits 
-			return
-			<tr>
-				<td>{data($i/@xml:id)}</td>
-				<td>{$i/name/text()}{
-					if ($i/ort/text()) then concat(' (', $i/ort/text(), ')') else ()
-				}</td>
-			</tr>
-			}
-};
 
-if ($coll="repo") then local:returnRepos($q) (\: coll="repo", q="" -> full repo table in oxygen :\)
-else
-if ($coll="per") then local:returnPersons($q) (\: coll="per", q="" -> empty persons table in oxygen :\)
-else
-	() (\: not(coll = ('repo', 'per')) -> error message in oxygen :\)
-
-:)
+(:local:query():)
+if ($q != "1") then local:demoResponse1() else
+if ($q != "2") then local:demoResponse2() else
+local:demoResponse()

@@ -21,104 +21,72 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 
+import de.snmusic.oxygen.plugin.dbtagger.prefs.PrefsData;
+import de.snmusic.oxygen.plugin.dbtagger.prefs.PrefsWindow;
 import ro.sync.exml.plugin.workspace.WorkspaceAccessPluginExtension;
 import ro.sync.exml.workspace.api.standalone.MenuBarCustomizer;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
-import ro.sync.exml.workspace.api.standalone.ui.Menu;
 
 /**
  * Creates the tagger plugin's menu and event.
  */
 public class TaggerPluginExtension implements WorkspaceAccessPluginExtension {
 
-	public Menu taggerMenu;
-	public PrefsStore prefsStore;
-	public StandalonePluginWorkspace workspace;
+	private TaggerMenu taggerMenu;
+	private PrefsData prefsData;
+	private StandalonePluginWorkspace workspace;
 
 	public TaggerPluginExtension getPluginExtension() {
 		return this;
 	}
 
-	public Menu getTaggerMenu() {
+	public TaggerMenu getTaggerMenu() {
 		return taggerMenu;
 	}
 
-	public PrefsStore getPrefsStore() {
-		return prefsStore;
+	public PrefsData getPreferences() {
+		return prefsData;
 	}
 
 	public void applicationStarted(final StandalonePluginWorkspace workspace) {
 
-		this.taggerMenu = new Menu("dbTagger", true);
-		this.prefsStore = new PrefsStore(workspace);
 		this.workspace = workspace;
 
-		setMenuItems();
+		this.taggerMenu = new TaggerMenu(workspace);
+		this.prefsData = new PrefsData(workspace);
+
+		initMenu();
 
 		workspace.addMenuBarCustomizer(new MenuBarCustomizer() {
-
 			public void customizeMainMenu(JMenuBar mainMenu) {
 				mainMenu.add(taggerMenu,
 						Math.max(mainMenu.getMenuCount() - 2, -1));
 			}
 		});
-	};
+	}
 
-	@Override
-	public boolean applicationClosing() {
-		return true;
-	};
+	public void initMenu() {
+		taggerMenu.setMenuItems(this.prefsData, getOpenPrefsAction(workspace));
+	}
 
-	/**
-	 * Creates new instances of the menu items; called every time the user
-	 * submits the preferences dialog with "OK".
-	 */
-	public void setMenuItems() {
-
-		if (taggerMenu.getItemCount() > 0)
-			taggerMenu.removeAll();
-
-		// Add search buttons
-		String[][] prefsSets = prefsStore.getCurrentPrefsSets();
-		for (final String[] prefsSet : prefsSets) {
-			Action searchAction = new AbstractAction() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Tagger t = new Tagger(workspace, prefsSet);
-					t.dispatchProcessing();
-				}
-			};
-			JMenuItem searchButton = new JMenuItem();
-			searchButton.setAction(searchAction);
-			searchButton.setAccelerator(KeyStroke
-					.getKeyStroke(prefsSet[PrefsStore.SHORTCUT]));
-			searchButton.setText(prefsSet[PrefsStore.NAME]);
-			taggerMenu.add(searchButton);
-		}
-
-		if (prefsSets.length > 0)
-			taggerMenu.addSeparator();
-
-		// Add preferences button
-		JMenuItem prefsButton = new JMenuItem();
+	private Action getOpenPrefsAction(final StandalonePluginWorkspace workspace) {
 		Action openPrefs = new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				PrefsEditor dialog = new PrefsEditor(workspace,
+				PrefsWindow dialog = new PrefsWindow(workspace,
 						getPluginExtension());
 				dialog.show();
 			}
 		};
-		prefsButton.setAction(openPrefs);
-		prefsButton.setText("Einstellungen");
-		taggerMenu.add(prefsButton);
+		return openPrefs;
+	};
+
+	@Override
+	public boolean applicationClosing() {
+		return true;
 	};
 
 }

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 14/lib/jide.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 14/lib/oxygen.jar"/>
-	<classpathentry kind="lib" path="lib/jsoup-1.7.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/httpclient-4.2.1.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/httpclient-cache-4.2.1.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/httpcore-4.2.1.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/httpmime-4.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/jide.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/oxygen.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/json.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Oxygen XML Editor 15/lib/log4j.jar" sourcepath="C:/Users/Ahlse/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

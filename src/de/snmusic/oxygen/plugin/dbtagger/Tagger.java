@@ -17,7 +17,11 @@
 package de.snmusic.oxygen.plugin.dbtagger;
 
 import java.awt.Component;
+import java.util.Arrays;
 
+import org.apache.log4j.Logger;
+
+import de.snmusic.oxygen.plugin.dbtagger.prefs.PrefsData;
 import ro.sync.ecss.extensions.api.AuthorAccess;
 import ro.sync.ecss.extensions.api.AuthorDocumentController;
 import ro.sync.ecss.extensions.api.AuthorOperationException;
@@ -29,20 +33,24 @@ import ro.sync.exml.workspace.api.editor.page.text.WSTextEditorPage;
 
 public class Tagger {
 
-	protected StandalonePluginWorkspace workspace;
+	public static final String LOGGER = "de.snmusic.oxygen.plugin.dbtagger";
+
+	private Logger logger = Logger.getLogger(LOGGER);
+
+	private StandalonePluginWorkspace workspace;
 	private String[] prefsSet;
 
 	public Tagger(StandalonePluginWorkspace workspace, String[] prefsSet) {
 		this.workspace = workspace;
-		this.prefsSet = prefsSet;
+		this.prefsSet = Arrays.copyOf(prefsSet, prefsSet.length);
 	}
 
 	/**
-	 * Checks the type of the currently active editor window. Breaks off if there is
-	 * none, otherwise calls either the Text Editor or the Author Editor method
-	 * for further processing.
+	 * Checks the type of the currently active editor window. Breaks off if
+	 * there is none, otherwise calls either the Text Editor or the Author
+	 * Editor method for further processing.
 	 */
-	public void dispatchProcessing() {
+	public void distributeProcessing() {
 
 		WSEditorPage currentPage = (workspace).getCurrentEditorAccess(
 				StandalonePluginWorkspace.MAIN_EDITING_AREA).getCurrentPage();
@@ -66,47 +74,54 @@ public class Tagger {
 				.getSelectedText() : "";
 
 		String resultVals[] = null;
-		DataChooser dialog = null;
-		
-		/*
-		 * Open tagger dialog
-		 */
+
+		resultVals = openDialog(selection);
+
+		if (resultVals != null) {
+			String result = applyTemplate(this.prefsSet[PrefsData.TEXT_TPL],
+					selection, resultVals);
+			insertInEditorPage(editorPage, result);
+		}
+	}
+
+	private String[] openDialog(String selection) {
+		QueryWindow dialog;
+		String[] resultVals = null;
 		try {
-			dialog = new DataChooser(workspace, selection, this.prefsSet);
+			dialog = new QueryWindow(workspace, selection, this.prefsSet);
 			dialog.setLocationRelativeTo((Component) workspace.getParentFrame());
 			resultVals = dialog.showDialog();
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		/*
-		 * Insert results into editor pane
-		 */
-		if (resultVals != null) {
-			/*
-			 * Apply template
-			 */
-			// Gets the user defined template for this action
-			String template = this.prefsSet[PrefsStore.TEXT_TPL];
-
-			// Replace template variable "${key}" with result key
-			String result = template.replace("${key}", resultVals[0]); // key
-			// Replace template variable "${text}" with result text
-			result = result.replace("${text}", resultVals[1]); // text
-			// Replace template variable "${selection}" with document selection
-			result = result.replace("${selection}", selection);
-
-			// insert
-			editorPage.beginCompoundUndoableEdit();
-			int selectionOffset = editorPage.getSelectionStart();
-			editorPage.deleteSelection();
-			try {
-				editorPage.getDocument().insertString(selectionOffset, result,
-						javax.swing.text.SimpleAttributeSet.EMPTY);
-			} catch (javax.swing.text.BadLocationException b) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e, e);
 			}
-			editorPage.endCompoundUndoableEdit();
 		}
+		return resultVals;
+	}
+
+	private String applyTemplate(String template, String selection,
+			String[] resultVals) {
+		String result = template.replaceAll("\\$\\{selection\\}", selection);
+		for (int i = 0; i < resultVals.length; i++) {
+			result = result.replaceAll("\\$\\{" + (i + 1) + "\\}",
+					resultVals[i]);
+		}
+		return result;
+	}
+
+	private void insertInEditorPage(WSTextEditorPage editorPage, String result) {
+		editorPage.beginCompoundUndoableEdit();
+		int selectionOffset = editorPage.getSelectionStart();
+		editorPage.deleteSelection();
+		try {
+			editorPage.getDocument().insertString(selectionOffset, result,
+					javax.swing.text.SimpleAttributeSet.EMPTY);
+		} catch (javax.swing.text.BadLocationException b) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(b, b);
+			}
+		}
+		editorPage.endCompoundUndoableEdit();
 	}
 
 	private void tagAuthorEditorPage(WSAuthorEditorPage editorPage) {
@@ -116,77 +131,63 @@ public class Tagger {
 				.getSelectedText() : "";
 
 		String resultVals[] = null;
-		DataChooser dialog = null;
-		
-		/*
-		 * Open tagger dialog
-		 */
-		try {
-			dialog = new DataChooser(workspace, selection, this.prefsSet);
-			dialog.setLocationRelativeTo((Component) workspace.getParentFrame());
-			resultVals = dialog.showDialog();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		resultVals = openDialog(selection);
 
 		/*
 		 * Insert results into editor pane
 		 */
 		if (resultVals != null) {
 			/*
-			 * Apply template
-			 */
-
-			/*
 			 * Gets the user defined template for this action; if no author mode
 			 * template is specified by the user, use the text mode template
 			 * instead
 			 */
-			String template = (this.prefsSet[PrefsStore.AUTHOR_TPL] == "") ? this.prefsSet[PrefsStore.TEXT_TPL]
-					: this.prefsSet[PrefsStore.AUTHOR_TPL];
+			String template = ("".equals(this.prefsSet[PrefsData.AUTHOR_TPL])) ? this.prefsSet[PrefsData.TEXT_TPL]
+					: this.prefsSet[PrefsData.AUTHOR_TPL];
 
-			// Replace template variable "${key}" with result key
-			String result = template.replace("${key}", resultVals[0]);
-			// Remove "{$selection}" from result
-			result = result.replace("${selection}", "");
+			String result = applyTemplate(template, "", resultVals);
 
-			if (result.contains("${text}")) {
-				/*
-				 * delete the selected document fragment; replace template
-				 * variable "${text}" with result text; perform
-				 * surroundWithFragment operation
-				 */
-
-				result = result.replace("${text}", resultVals[1]);
-				AuthorDocumentController controller = authorAccess
-						.getDocumentController();
-				controller.beginCompoundEdit();
-				boolean deleteSelection = false;
-				try {
-					if (authorAccess.getEditorAccess().hasSelection()) {
-						deleteSelection = true;
-						authorAccess.getEditorAccess().deleteSelection();
-					}
-					CommonsOperationsUtil.surroundWithFragment(authorAccess,
-							false, result);
-				} catch (AuthorOperationException e) {
-					if (deleteSelection) {
-						controller.cancelCompoundEdit();
-					}
-				} finally {
-					controller.endCompoundEdit();
-				}
+			if (template.contains("${selection}")) {
+				insertInAuthorPageSurround(authorAccess, result);
 			} else {
-				/*
-				 * surround the selected document fragment with the result
-				 * string
-				 */
-				try {
-					CommonsOperationsUtil.surroundWithFragment(authorAccess,
-							false, result);
-				} catch (AuthorOperationException e) {
-					e.printStackTrace();
-				}
+				insertInAuthorPageReplace(authorAccess, result);
+			}
+		}
+	}
+
+	private void insertInAuthorPageReplace(AuthorAccess authorAccess,
+			String result) {
+		AuthorDocumentController controller = authorAccess
+				.getDocumentController();
+		controller.beginCompoundEdit();
+		boolean deleteSelection = false;
+		try {
+			if (authorAccess.getEditorAccess().hasSelection()) {
+				deleteSelection = true;
+				authorAccess.getEditorAccess().deleteSelection();
+			}
+			CommonsOperationsUtil.surroundWithFragment(authorAccess, false,
+					result);
+		} catch (AuthorOperationException e) {
+			if (deleteSelection) {
+				controller.cancelCompoundEdit();
+			}
+			if (logger.isDebugEnabled()) {
+				logger.debug(e, e);
+			}
+		} finally {
+			controller.endCompoundEdit();
+		}
+	}
+
+	private void insertInAuthorPageSurround(AuthorAccess authorAccess,
+			String result) {
+		try {
+			CommonsOperationsUtil.surroundWithFragment(authorAccess, false,
+					result);
+		} catch (AuthorOperationException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e, e);
 			}
 		}
 	}
