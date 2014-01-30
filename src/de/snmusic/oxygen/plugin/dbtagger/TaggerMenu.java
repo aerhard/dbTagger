@@ -51,12 +51,6 @@ public class TaggerMenu extends Menu {
 			add(searchButton);
 		}
 		
-//		Die "M" Modifikatortasten sind eine plattformunabhängige Art Tasten zu belegen:
-//		 - M1 ist die Befehlstaste bei MacOS X, und die CTRL-Taste auf anderen Plattformen;
-//		 - M2 ist die SHIFT-Tastey;
-//		 - M3 ist die Optionstaste bei MacOS X, und die ALT-Taste auf anderen Plattformen;
-//		 - M4 ist die CTRL-Taste bei MacOS X, und ist auf anderen Plattformen undefiniert.
-
 		if (prefsSets.length > 0) {
 			addSeparator();
 		}
