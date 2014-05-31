@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plugin SYSTEM "../plugin.dtd">
+<plugin
+    id="com.aerhard.oxygen.plugin.dbtagger"
+    name="${project.name}"
+    description="Database driven tagging plugin"
+    version="${project.version}"
+    vendor="Alexander Erhard"
+    class="com.aerhard.oxygen.plugin.dbtagger.TaggerPlugin"
+    classLoaderType="preferReferencedResources">
+    <runtime>
+        <library name="lib/${project.build.finalName}.jar"/>
+    </runtime>
+    <extension type="WorkspaceAccess" 
+    class="com.aerhard.oxygen.plugin.dbtagger.TaggerPluginExtension"/>
+</plugin>
