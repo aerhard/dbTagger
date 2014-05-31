@@ -3,7 +3,7 @@ package com.aerhard.oxygen.plugin.dbtagger;
 import java.util.Arrays;
 
 /**
- * Data object for the search results data.
+ * Data object to contain headers and body of a table.
  */
 public class TableData {
 

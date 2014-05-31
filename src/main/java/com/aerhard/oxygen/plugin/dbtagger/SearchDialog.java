@@ -54,7 +54,7 @@ import ro.sync.annotations.api.API;
 import ro.sync.annotations.api.APIType;
 import ro.sync.annotations.api.SourceType;
 import ro.sync.ecss.extensions.commons.ui.OKCancelDialog;
-import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
+import ro.sync.exml.workspace.api.Workspace;
 
 /**
  * The search dialog component.
@@ -125,7 +125,7 @@ public class SearchDialog extends OKCancelDialog {
      * @param configItem
      *            The current config item.
      */
-    public SearchDialog(StandalonePluginWorkspace workspace, String selection,
+    public SearchDialog(Workspace workspace, String selection,
             String[] configItem) {
         super((Frame) workspace.getParentFrame(),
                 configItem[ConfigStore.ITEM_TITLE], true);
@@ -290,7 +290,7 @@ public class SearchDialog extends OKCancelDialog {
                 configItem[ConfigStore.ITEM_PASSWORD], url, searchString,
                 isFirst);
         if (response != null) {
-            result = jsonUtil.transform(response);
+            result = jsonUtil.getTableData(response);
         }
         if (result != null) {
             validData = true;

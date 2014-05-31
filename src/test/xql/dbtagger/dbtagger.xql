@@ -36,7 +36,7 @@ declare function local:demoResponse () as node() {
       </data>
       <data json:array="true">
          <json:value>b</json:value>
-         <json:value>Type in a string, hit the enter key and check the "q" parameter in the next row.</json:value>
+         <json:value>Type in a string, hit "Enter" and check the "q" parameter in the next row.</json:value>
       </data>
       <data json:array="true">
          <json:value>c</json:value>
@@ -56,11 +56,11 @@ declare function local:demoResponse () as node() {
       </data>
       <data json:array="true">
          <json:value>3</json:value>
-         <json:value>Search for "3" to get a server error. ERROR</json:value>
+         <json:value>Search for "3" to cause a server exception. ERROR</json:value>
       </data>
       <data json:array="true">
          <json:value>4</json:value>
-         <json:value>Search for "4" to get malformed data. ERROR</json:value>
+         <json:value>Search for "4" to request malformed data. ERROR</json:value>
       </data>
    </response>
 
@@ -175,7 +175,7 @@ declare function local:demoResponse4 () as node() {
 (:~
 ~ Example database query (two-column server response)
 :)
-declare function local:query () as node()* {
+(:declare function local:query () as node()* {
 
    let $hits := 
       if ($q='' or $coll='') 
@@ -197,7 +197,7 @@ declare function local:query () as node()* {
             </data>
       }
       
-};
+};:)
 
 
 

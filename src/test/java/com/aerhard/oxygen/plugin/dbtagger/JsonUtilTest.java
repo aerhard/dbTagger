@@ -45,7 +45,7 @@ public class JsonUtilTest {
      */
     @Test
     public void testValidString() {
-        TableData data = jsonUtil.transform(validString);
+        TableData data = jsonUtil.getTableData(validString);
         verify(workspace, never()).showErrorMessage(anyString());
         assertEquals("Name", data.getHeaders()[1]);
         assertEquals("1", data.getBody()[0][0]);
@@ -58,7 +58,7 @@ public class JsonUtilTest {
     @Test
     public void testUnparsableString() {
         @SuppressWarnings("unused")
-        TableData data = jsonUtil.transform(unparsableString);
+        TableData data = jsonUtil.getTableData(unparsableString);
         verify(workspace).showErrorMessage(anyString());
     }
 
@@ -68,7 +68,7 @@ public class JsonUtilTest {
     @Test
     public void testMissingCols() {
         @SuppressWarnings("unused")
-        TableData data = jsonUtil.transform(missingCols);
+        TableData data = jsonUtil.getTableData(missingCols);
         verify(workspace).showErrorMessage(anyString());
     }
 
@@ -78,7 +78,7 @@ public class JsonUtilTest {
     @Test
     public void testMissingData() {
         @SuppressWarnings("unused")
-        TableData data = jsonUtil.transform(missingData);
+        TableData data = jsonUtil.getTableData(missingData);
         verify(workspace, never()).showErrorMessage(anyString());
     }
 
@@ -88,7 +88,7 @@ public class JsonUtilTest {
     @Test
     public void testEnoughDataRowsCols() {
         @SuppressWarnings("unused")
-        TableData data = jsonUtil.transform(notEnoughDataRows);
+        TableData data = jsonUtil.getTableData(notEnoughDataRows);
         verify(workspace).showErrorMessage(anyString());
     }
 }

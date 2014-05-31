@@ -13,7 +13,7 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
+import ro.sync.exml.workspace.api.Workspace;
 
 /**
  * Container for the utility function
@@ -23,8 +23,8 @@ public class HttpUtil {
 
     private static final String UTF_8 = "UTF-8";
 
-    /** oXygen's workspace object.. */
-    private StandalonePluginWorkspace workspace;
+    /** oXygen's workspace object. */
+    private Workspace workspace;
 
     /** The localization resource bundle. */
     private ResourceBundle i18n;
@@ -35,7 +35,7 @@ public class HttpUtil {
      * @param workspace
      *            the workspace
      */
-    public HttpUtil(StandalonePluginWorkspace workspace) {
+    public HttpUtil(Workspace workspace) {
         this.workspace = workspace;
         i18n = ResourceBundle.getBundle("Tagger");
     };
@@ -52,8 +52,8 @@ public class HttpUtil {
      *            The part of the URL specified in the option dialog
      * @param searchString
      *            The search string.
-     * @param Specifies
-     *            if this is the first search in a series.
+     * @param isFirst
+     *            Specifies if this is the first search in a series.
      * @return The response string.
      */
     public String get(String user, String password, String urlOption,

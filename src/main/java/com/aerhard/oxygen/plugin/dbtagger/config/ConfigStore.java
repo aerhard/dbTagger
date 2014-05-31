@@ -216,8 +216,8 @@ public class ConfigStore {
         for (int i = 0; i < configItems.length; i++) {
             encryptedData[i] = Arrays.copyOfRange(configItems[i], 0,
                     configItems[i].length);
-            encryptedData[i][ConfigStore.ITEM_PASSWORD] = new String(
-                    utilAccess.encrypt(encryptedData[i][ConfigStore.ITEM_PASSWORD]));
+            encryptedData[i][ConfigStore.ITEM_PASSWORD] = utilAccess
+                    .encrypt(encryptedData[i][ConfigStore.ITEM_PASSWORD]);
         }
         return encryptedData;
     };

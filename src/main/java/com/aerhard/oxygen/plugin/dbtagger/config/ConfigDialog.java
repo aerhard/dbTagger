@@ -37,7 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
-import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
+import ro.sync.exml.workspace.api.Workspace;
 
 /**
  * Manages the config dialog component.
@@ -57,7 +57,7 @@ public class ConfigDialog {
     private ConfigTable table;
 
     /** oXygen's workspace object.. */
-    private StandalonePluginWorkspace workspace;
+    private Workspace workspace;
 
     /** The localization resource bundle. */
     private ResourceBundle i18n;
@@ -73,7 +73,7 @@ public class ConfigDialog {
      * @param title
      *            the frame title
      */
-    public ConfigDialog(StandalonePluginWorkspace workspace,
+    public ConfigDialog(Workspace workspace,
             ConfigStore configStore, String title) {
         this.workspace = workspace;
         this.title = title;

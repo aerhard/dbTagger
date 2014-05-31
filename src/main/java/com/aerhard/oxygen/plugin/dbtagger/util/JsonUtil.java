@@ -26,15 +26,15 @@ import org.json.JSONObject;
 
 import com.aerhard.oxygen.plugin.dbtagger.TableData;
 
-import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
+import ro.sync.exml.workspace.api.Workspace;
 
 /**
  * Container for JSON utility functions.
  */
 public class JsonUtil {
 
-    /** oXygen's workspace object.. */
-    private StandalonePluginWorkspace workspace;
+    /** oXygen's workspace object. */
+    private Workspace workspace;
 
     /** The localization resource bundle. */
     private ResourceBundle i18n;
@@ -45,7 +45,7 @@ public class JsonUtil {
      * @param workspace
      *            oXygen's workspace object.
      */
-    public JsonUtil(StandalonePluginWorkspace workspace) {
+    public JsonUtil(Workspace workspace) {
         this.workspace = workspace;
         i18n = ResourceBundle.getBundle("Tagger");
     };
@@ -58,16 +58,16 @@ public class JsonUtil {
      * @return the table data object or null if data could not be tranformed for
      *         further processing.
      */
-    public TableData transform(String input) {
+    public TableData getTableData(String input) {
 
         try {
             JSONObject responseJSON = new JSONObject(input);
-            String[] headers = readTableHeaders(responseJSON);
+            String[] headers = getTableHeaders(responseJSON);
             if (headers != null) {
                 if (!responseJSON.has("data")) {
                     return new TableData(headers, null);
                 }
-                String[][] data = readContentData(responseJSON, headers.length);
+                String[][] data = getTableBody(responseJSON, headers.length);
                 return (data == null) ? null : new TableData(headers, data);
             }
         } catch (Exception e) {
@@ -78,26 +78,18 @@ public class JsonUtil {
     }
 
     /**
-     * Reads table headers from the JSON server response.
+     * Gets table headers from the JSON server response.
      * 
      * @param responseJSON
      *            the JSON response
      * @return the headers
      */
-    private String[] readTableHeaders(JSONObject responseJSON) {
+    private String[] getTableHeaders(JSONObject responseJSON) {
         String[] cols = null;
-
         try {
-            if (responseJSON.optJSONArray("cols") == null) {
-                workspace.showErrorMessage(i18n
-                        .getString("jsonUtil.columnNameError"));
-                return null;
-            }
             JSONArray colsArray = responseJSON.getJSONArray("cols");
-
             cols = new String[colsArray.length()];
-            JSONObject fieldObj = new JSONObject();
-
+            JSONObject fieldObj;
             for (int i = 0; i < colsArray.length(); i++) {
                 fieldObj = (JSONObject) colsArray.get(i);
                 cols[i] = fieldObj.optString("name");
@@ -110,19 +102,20 @@ public class JsonUtil {
     }
 
     /**
-     * Reads the table body content from the JSON server response.
+     * Gets the table body in the JSON server response and calls
+     * {@link #convertArray(int, int, JSONArray)}.
      * 
      * @param responseJSON
      *            the JSON response
      * @return the body content
      */
-    private String[][] readContentData(JSONObject responseJSON, int cols) {
+    private String[][] getTableBody(JSONObject responseJSON, int columns) {
         try {
             JSONArray dataArray = responseJSON.getJSONArray("data");
             if (dataArray != null) {
-                int dataRows = dataArray.length();
-                if (dataRows > 0) {
-                    return convertArray(cols, dataArray, dataRows);
+                int rows = dataArray.length();
+                if (rows > 0) {
+                    return convertArray(rows, columns, dataArray);
                 }
             }
         } catch (JSONException e) {
@@ -134,19 +127,31 @@ public class JsonUtil {
         return null;
     }
 
-    private String[][] convertArray(int cols, JSONArray dataArray, int dataRows) {
-        String[][] resultTable = new String[dataRows][];
-        for (int i = 0; i < dataRows; i++) {
+    /**
+     * Converts a JSON array to from the JSON server response.
+     * 
+     * @param columns
+     *            The number of columns.
+     * @param rows
+     *            The number of rows.
+     * @param dataArray
+     *            the input data.
+     * 
+     * @return the body content
+     */
+    private String[][] convertArray(int rows, int columns, JSONArray dataArray) {
+        String[][] resultTable = new String[rows][];
+        for (int i = 0; i < rows; i++) {
             JSONArray arr = dataArray.getJSONArray(i);
             List<String> list = new ArrayList<String>();
-            if (arr.length() < cols) {
+            if (arr.length() < columns) {
                 throw new ArrayStoreException(
                         i18n.getString("jsonUtil.dataColumnError"));
             }
-            for (int j = 0; j < cols; j++) {
+            for (int j = 0; j < columns; j++) {
                 list.add(arr.isNull(j) ? "" : arr.getString(j));
             }
-            resultTable[i] = list.toArray(new String[cols]);
+            resultTable[i] = list.toArray(new String[columns]);
         }
         return resultTable;
     }

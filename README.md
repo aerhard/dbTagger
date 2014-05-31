@@ -1,9 +1,15 @@
 dbTagger
 ========
+The dbTagger plug-in adds pop-up dialogs to the oXygen XML Editor to facilitate finding identifiers or names (for example, of persons, places, bibliographic records in TEI documents) in local or remote databases and inserting them into XML documents.
 
-oXygen XML plugin for customized database driven tagging.
+Features
+--------
 
-This plugin is intended to speed up tagging XML documents in oXygen's editor or author view by providing database lookups via http in configurable popup windows. Use cases might include the insertion of stored id numbers or the canonical names of persons, places, bibliographic records etc.  
+- Configurable server look-ups
+- User-defined templates to format the retrieved information 
+- User-defined keyboard shortcuts
+- Configuration editor
+- Support for multiple configurations side by side
 
 Prerequisites
 -------------
@@ -13,18 +19,30 @@ oXygen XML Editor 15.0+
 Installation
 ------------
 
-* Download and extract the zip file. 
-* Close oXygen.
-* Copy the content of the "dist" folder (= the subfolder "dbTagger") to the "plugins" subdirectory of your oXygen installation.
-* Restart oXygen.
-* In the main menu, there will be a new menu item "dbTagger", containing four search buttons (the search dialogs will only pop up if there is a text or author editor panel opened) and a preferences menu. 
-* If you are running an eXist database instance on localhost:8080, load the content of the folder "xql" (a folder named "dbTagger" containing one xql file) from the extracted zip to the eXist root folder. The pre-defined queries of the dbTagger oXygen plugin will point to this location. To try it out, open an xml file in oXygen, select a passage of text and the click on one of the search buttons in the dbTagger menu to launch a demo query.
-* Otherwise, adjust the query strings in the preferences menu according to your server configuration; by default, they are passing two search parameters, as in localhost:8080/exist/rest/db/dbtagger/dbtagger.xql?coll=per&q=. Note that the second parameter doesn't have a value; it will get its value from the selection in the editor panel.
+In oXygen, navigate to `Options / Preferences / Add-ons` and add the following URL to the update sites: 
+
+```
+https://raw.githubusercontent.com/aerhard/dbTagger/master/target/update/extension.xml
+```
+
+Click on `OK` and let oXygen install the plug-in by navigating to `Help / Check for add-ons updates ...`. When the plug-in is installed, restart oXygen.
+
+(You can alternatively clone this repository and extract the jar file to the `target` folder in oXygen's plug-in directory. The option for automatic updates will not be available then.) 
+
+Usage
+-----
+
+If you are running an eXist database on localhost:8080, you can upload the file `src/test/xql/dbtagger/dbtagger.xql` to the database collection `/db/dbtagger`. 
+
+You can then view a demo server response by opening a new XML file, selecting some text and clicking on one of the top buttons in the dbTagger menu (to the left of the main menu's `Window` item). 
+
+Preconfigured are two demo database look-ups, pointing to `localhost:8080/exist/rest/db/dbtagger/dbtagger.xql?coll=per&q=`. Select `Configure ...` in the dbTagger menu to change the connection settings, add / delete items, modify templates or adapt the shortcuts to your preferences. 
+
 
 Expected server response
 ------------------------
 
-The plugin expects the server to return a JSON response, providing data to fill up a selection table with one or more rows. The first array in the JSON object, "cols", contains key-value pairs of the column names, each wrapped in a separate object; the second array contains the data for the table body:
+The plugin expects the server to return a response in JSON format. The first array in the JSON object, "cols", has to contain key-value pairs of the column names, each wrapped in a separate object; the second array contains the data filling the table body in the search results list:
 
 	{ 
 		"cols" : [{ 
@@ -37,37 +55,52 @@ The plugin expects the server to return a JSON response, providing data to fill 
 		"data" : [[
 				"id-1", 
 				"Mottl", 
-				"Dirigent"
+				"Conductor"
 			], [
 				"id-2", 
 				"Singer", 
-				"Arrangeur"
+				"Arranger"
 			]] 
 	}
 
-(See the file dbtagger.xql in the xql/dbtagger directory for an example of an eXist server script.)
+(See the file `src/test/xql/dbtagger/dbtagger.xql` for a sample server script.)
 
-Insertion templates
+Templates
 -------------------
 
-In the preferences menu, you can specify one or more content templates, which will be combined with the specified columns in the selected results table row. To specify, which columns to add, insert $(n) for each row n into the template. The string $(selection) will re-insert the previously selected text at the specified position. 
+The way data from the server is added to the XML file can be specified by a template for each item in the config list. A dbTagger template is a string representation of the resulting XML text which contains information where to insert the data of the search results table. 
+
+In order to provide a reference to the content of a certain column, write `$(n)` into the template (n is the number of the column, starting with 1). `$(selection)` will insert the previously selected text at the specified position - if it's missing, the selected text gets overwritten. 
 
 * ${1} - returns the value of the first column of the results table
 * ${2} - returns the value of the second column
 	etc.
 * ${selection} - inserts the initially selected text into the template
 
-Examples:
+Template examples:
 
-* &lt;rs type="person" key="${1}"&gt;${selection}&lt;/rs&gt; - will wrap the selected text with an rs element and a key attribute with the value of the first column
-* &lt;repository key="${1}"&gt;${2}&lt;/repository&gt; - will replace the selected text
+* `<rs type="person" key="${1}">${selection}</rs>` - will wrap the selected text in an &lt;rs&gt; element; the key attribute of the element gets the value of the first data column
+* `<repository key="${1}">${2}</repository>` - will replace the selected text by the value in the second column, wrapped in a &lt;repository&gt; element.
 
-The plugin generates a separate menu entry and popup menu for each template you specify. 
-When you assign a shortcut key to a template, be sure that your allocation doen't contradict the other shortcuts in oXygen as the plugin shortcould should not work then. In such a case, change the settings either in the plugin's or in oXygen's settings.
+Note: In templates for the oXygen author pane, you have to specify namespaces (for example `<rs xmlns="http://www.tei-c.org/ns/1.0" type="person" key="${1}">${selection}</rs>`). In text editor templates, namespaces can be omitted.
+
+Keyboard shortcuts
+------------------
+
+You can specify shortcuts by nagivating to the `dbTagger / Configure ...` menu item and entering your shortcut in the last table column. When you assign a keyboard shortcut, check that it isn't already taken by oXygen (in which case the assignment would take no effect).
+
+UI Languages
+------------
+
+Currently supported are English and German. For a new language, add a file with your translations to `src/main/resources` and perform a new build.
+
+Development
+-----------
+
+The plug-in is organized as a [Maven project](http://maven.apache.org/), which depends on the [oXygen 16 SDK](http://www.oxygenxml.com/oxygen_sdk.html). When Maven is installed on your computer, build the plug-in by running `mvn clean install` from the root directory of the project. 
 
 Further Notes
 -------------
 
-Tested with the standalone oXygen editor in Windows 7. 
-The pre-defined shortcut keys probably need adjustment ("meta" instead of "control"?) when you're using the plugin on a MAC.
-User preferences are stored as binary files in the oxygen app folder, in Windows: %appdata%\com.oxygenxml  
+Tested with the standalone oXygen XML Editor in Windows 7. The pre-defined shortcut keys possibly need adjustment (`meta` instead of `control`) when you're using the plugin on a MAC (that's not tested yet).
+User preferences are stored as binary files in the oxygen app folder, in Windows: `%appdata%\com.oxygenxml`
