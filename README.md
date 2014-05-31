@@ -36,11 +36,11 @@ If you are running an eXist database on localhost:8080, you can upload the file 
 
 You can then view a demo server response by opening a new XML file, selecting some text and clicking on one of the top buttons in the dbTagger menu (to the left of the main menu's `Window` item). 
 
-Preconfigured are two demo database look-ups, pointing to `localhost:8080/exist/rest/db/dbtagger/dbtagger.xql?coll=per&q=`. Select `Configure ...` in the dbTagger menu to change the connection settings, add / delete items, modify templates or adapt the shortcuts to your preferences. 
+Preconfigured are two demo server requests, pointing to `localhost:8080/exist/rest/db/dbtagger/dbtagger.xql?coll=per&q=`. Select `Configure ...` in the dbTagger menu to change the connection settings, add / delete items, modify templates or adapt the shortcuts to your preferences. 
 
 
-Expected server response
-------------------------
+Server setup
+------------
 
 The plugin expects the server to return a response in JSON format. The first array in the JSON object, "cols", has to contain key-value pairs of the column names, each wrapped in a separate object; the second array contains the data filling the table body in the search results list:
 
@@ -64,6 +64,8 @@ The plugin expects the server to return a response in JSON format. The first arr
 	}
 
 (See the file `src/test/xql/dbtagger/dbtagger.xql` for a sample server script.)
+
+When a new search window is opened, the plug-in adds the GET parameter `first=true` to the request which will not be added to subsequent search requests from the search field of the dialog. This way, the first request - based on the text selected in the editor pane - can be handled differently than the following requests based on the user input. 
 
 Templates
 -------------------
