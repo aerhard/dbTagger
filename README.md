@@ -22,7 +22,7 @@ Installation
 In oXygen, navigate to `Options / Preferences / Add-ons` and add the following URL to the update sites: 
 
 ```
-https://raw.githubusercontent.com/aerhard/dbTagger/master/target/update/extension.xml
+https://raw.githubusercontent.com/aerhard/dbTagger/master/target/update/latest.xml
 ```
 
 Click on `OK` and let oXygen install the plug-in by navigating to `Help / Check for add-ons updates ...`. When the plug-in is installed, restart oXygen.

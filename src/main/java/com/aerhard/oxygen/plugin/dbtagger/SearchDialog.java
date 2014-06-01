@@ -30,7 +30,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -45,7 +44,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
-import com.aerhard.oxygen.plugin.dbtagger.config.ConfigStore;
 import com.aerhard.oxygen.plugin.dbtagger.util.HttpUtil;
 import com.aerhard.oxygen.plugin.dbtagger.util.JsonUtil;
 import com.jidesoft.swing.InfiniteProgressPanel;
@@ -64,10 +62,10 @@ public class SearchDialog extends OKCancelDialog {
 
     private static final long serialVersionUID = 1L;
 
-    /** The preferred height of the config window */
+    /** The preferred height of the config window. */
     private static final int PREFERRED_WIDTH = 800;
 
-    /** The preferred heigth of the config window */
+    /** The preferred heigth of the config window. */
     private static final int PREFERRED_HEIGHT = 400;
 
     /** The maximum width of the first row. */
@@ -80,31 +78,37 @@ public class SearchDialog extends OKCancelDialog {
     private static final String SEARCH = "search";
 
     /** The search field component. */
-    private final JTextField searchField = new JTextField();
-
-    /** The config currently in concern. */
-    private String[] configItem;
-
-    /** The table model. */
-    private DefaultTableModel tableModel;
+    private JTextField searchField;
 
     /** The search results table component. */
-    private JTable searchResultsTable = new JTable();
+    private JTable searchResultsTable;
 
-    /** The json util object. */
+    /** The model of the search results table. */
+    private DefaultTableModel tableModel;
+
+    /** The json utility. */
     private JsonUtil jsonUtil;
 
-    /** The http util object. */
+    /** The http utility. */
     private HttpUtil httpUtil;
 
     /** The localization resource bundle. */
     private ResourceBundle i18n;
 
     /** Indicates if valid data has been received from the server. */
-    private boolean validData = false;
+    private boolean validData;
 
-    /** The progress panel component */
-    private InfiniteProgressPanel glassPane;
+    /** The loading mask. */
+    private InfiniteProgressPanel loadingMask;
+
+    /** The fixed part of the server request URL. */
+    private String url;
+
+    /** The server request user name. */
+    private String user;
+
+    /** The server request password. */
+    private String password;
 
     /**
      * Checks if valid data has been received from the server.
@@ -120,33 +124,49 @@ public class SearchDialog extends OKCancelDialog {
      * 
      * @param workspace
      *            oXygen's workspace object.
-     * @param selection
-     *            The current selection in the editor pane.
-     * @param configItem
-     *            The current config item.
      */
-    public SearchDialog(Workspace workspace, String selection,
-            String[] configItem) {
-        super((Frame) workspace.getParentFrame(),
-                configItem[ConfigStore.ITEM_TITLE], true);
-        this.configItem = Arrays.copyOf(configItem, configItem.length);
+    public SearchDialog(Workspace workspace) {
+        super((Frame) workspace.getParentFrame(), null, true);
         jsonUtil = new JsonUtil(workspace);
         httpUtil = new HttpUtil(workspace);
         i18n = ResourceBundle.getBundle("Tagger");
 
-        getContentPane().add(createSearchFieldPane(selection),
-                BorderLayout.NORTH);
-        getContentPane().add(createSearchResultsPane(), BorderLayout.CENTER);
+        loadingMask = new InfiniteProgressPanel();
+        setGlassPane(loadingMask);
 
-        glassPane = new InfiniteProgressPanel();
-        setGlassPane(glassPane);
+        getContentPane().add(createSearchFieldPane(), BorderLayout.NORTH);
+        getContentPane().add(createSearchResultsPane(), BorderLayout.CENTER);
+        initSearchFieldListeners();
+        initTableListeners();
 
         pack();
         setResizable(true);
 
         setLocationRelativeTo((Component) workspace.getParentFrame());
+    }
 
-        loadData(selection, true);
+    /**
+     * Configures the search dialog with a new set of basic parameters. This
+     * method is called each time the user opens the search dialog.
+     * 
+     * @param title
+     *            The dialog title
+     * @param user
+     *            The database user
+     * @param password
+     *            The database password
+     * @param url
+     *            The URL.
+     * @param searchFieldText
+     *            The text to put in the search field.
+     */
+    public void setConfig(String title, String user, String password,
+            String url, String searchFieldText) {
+        setTitle(title);
+        searchField.setText(searchFieldText);
+        this.url = url;
+        this.user = user;
+        this.password = password;
     }
 
     /**
@@ -157,8 +177,7 @@ public class SearchDialog extends OKCancelDialog {
      *            The text to add.
      * @return The search field pane.
      */
-    private JPanel createSearchFieldPane(String text) {
-        // Search field in north pane
+    private JPanel createSearchFieldPane() {
         JPanel searchFieldPane = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(0, 0, BORDER_W, BORDER_W);
@@ -172,13 +191,30 @@ public class SearchDialog extends OKCancelDialog {
         c.gridx = 1;
         c.weightx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        searchField.setText(text);
+        searchField = new JTextField();
+        searchFieldPane.add(searchField, c);
+        return searchFieldPane;
+    }
+
+    /**
+     * Creates the pane containing the search results table and its components.
+     * 
+     * @return The search results pane component.
+     */
+    private JScrollPane createSearchResultsPane() {
+        searchResultsTable = new JTable();
+        JScrollPane searchResultsPane = new JScrollPane(searchResultsTable);
+        searchResultsPane.setPreferredSize(new Dimension(PREFERRED_WIDTH,
+                PREFERRED_HEIGHT));
+        return searchResultsPane;
+    }
+
+    /** Initializes the search field action listeners. */
+    private void initSearchFieldListeners() {
         searchField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String text = searchField.getText();
-                invokeLoadData(text);
-                tableModel.fireTableDataChanged();
+                invokeLoadData(searchField.getText());
             }
         });
         searchField.addFocusListener(new FocusListener() {
@@ -192,18 +228,10 @@ public class SearchDialog extends OKCancelDialog {
                 selectSearchFieldText(false);
             }
         });
-        searchFieldPane.add(searchField, c);
-        return searchFieldPane;
     }
 
-    /**
-     * Creates the search results pane containing the data table.
-     * 
-     * @return The search results pane component.
-     */
-    private JScrollPane createSearchResultsPane() {
-        // Search results table in center panel
-        JScrollPane searchResultsPane = new JScrollPane(searchResultsTable);
+    /** Initializes the search results table action listeners. */
+    private void initTableListeners() {
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         searchResultsTable.getInputMap(
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter,
@@ -225,9 +253,6 @@ public class SearchDialog extends OKCancelDialog {
                 }
             }
         });
-        searchResultsPane.setPreferredSize(new Dimension(PREFERRED_WIDTH,
-                PREFERRED_HEIGHT));
-        return searchResultsPane;
     }
 
     /**
@@ -245,7 +270,7 @@ public class SearchDialog extends OKCancelDialog {
     }
 
     /**
-     * Calls {@link #loadData(String)} in a new process
+     * Calls {@link #loadData(String)} in a new thread
      * 
      * @param searchString
      *            The search string.
@@ -254,19 +279,19 @@ public class SearchDialog extends OKCancelDialog {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                glassPane.start();
+                loadingMask.start();
                 searchField.setEnabled(false);
-                Thread performer = new Thread(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         loadData(searchString, false);
-                        glassPane.stop();
+                        loadingMask.stop();
                         searchField.setEnabled(true);
                         searchField.requestFocus();
                         selectSearchFieldText(true);
+                        tableModel.fireTableDataChanged();
                     }
-                }, "Search");
-                performer.start();
+                }).start();
             }
         });
     }
@@ -283,11 +308,9 @@ public class SearchDialog extends OKCancelDialog {
      *            initial search (based on the selected text in the editor pane)
      *            in a distinct manner.
      */
-    private void loadData(String searchString, Boolean isFirst) {
+    void loadData(String searchString, Boolean isFirst) {
         TableData result = null;
-        String url = configItem[ConfigStore.ITEM_URL];
-        String response = httpUtil.get(configItem[ConfigStore.ITEM_USER],
-                configItem[ConfigStore.ITEM_PASSWORD], url, searchString,
+        String response = httpUtil.get(user, password, url, searchString,
                 isFirst);
         if (response != null) {
             result = jsonUtil.getTableData(response);
@@ -313,16 +336,6 @@ public class SearchDialog extends OKCancelDialog {
                 return false;
             };
 
-            @Override
-            public Class<?> getColumnClass(int column) {
-                Class<?> returnValue;
-                if ((column >= 0) && (column < getColumnCount())) {
-                    returnValue = getValueAt(0, column).getClass();
-                } else {
-                    returnValue = Object.class;
-                }
-                return returnValue;
-            }
         };
         searchResultsTable.setModel(tableModel);
 

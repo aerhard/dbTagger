@@ -37,16 +37,8 @@ public class TaggerPluginExtension implements WorkspaceAccessPluginExtension {
             .getLogger(TaggerPluginExtension.class.getName());
 
     /** The plugin properties loaded from the properties file. */
-    private static Properties properties = new Properties();
+    private Properties properties = new Properties();
 
-    /**
-     * Gets the properties.
-     * 
-     * @return the {@link #properties}
-     */
-    public static Properties getProperties() {
-        return properties;
-    }
 
     /*
      * (non-Javadoc)
@@ -58,8 +50,8 @@ public class TaggerPluginExtension implements WorkspaceAccessPluginExtension {
     @Override
     public void applicationStarted(final StandalonePluginWorkspace workspace) {
         loadPluginProperties();
-        TaggerMenu taggerMenu = new TaggerMenu(workspace,
-                properties.getProperty("plugin.name"));
+        TaggerMenu taggerMenu = new TaggerMenu(workspace, properties
+                );
         taggerMenu.createMenuItems();
         addMenuToToolbar(workspace, taggerMenu);
     }
@@ -67,8 +59,7 @@ public class TaggerPluginExtension implements WorkspaceAccessPluginExtension {
     /**
      * loads the plugin properties from "plugin.properties"
      */
-    private static void loadPluginProperties() {
-
+    private void loadPluginProperties() {
         try {
             properties.load(TaggerPluginExtension.class
                     .getResourceAsStream("/plugin.properties"));

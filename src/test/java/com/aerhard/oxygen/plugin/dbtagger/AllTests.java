@@ -5,9 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-//@SuiteClasses({ SearchDialogTest.class })
-@SuiteClasses({ ConfigStoreTest.class, ConfigTableTest.class, i18nTest.class,
-        JsonUtilTest.class, SearchDialogTest.class })
+@SuiteClasses({ ConfigTableTest.class, i18nTest.class, JsonUtilTest.class,
+        SearchDialogTest.class })
 public class AllTests {
 
 }

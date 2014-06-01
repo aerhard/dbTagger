@@ -3,8 +3,10 @@ package com.aerhard.oxygen.plugin.dbtagger;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -47,14 +49,19 @@ public class ConfigTableTest {
         String[][] twoRows = { { "11", "12", "13", "14", "15", "16", "17" },
                 { "21", "22", "23", "24", "25", "26", "27" } };
         String[][] oneRow = { { "21", "22", "23", "24", "25", "26", "27" } };
-        return Arrays.asList(new Object[][] { { twoRows },
-                { oneRow } });
+        return Arrays.asList(new Object[][] { { twoRows }, { oneRow } });
     }
 
     @Before
-    public void initTC() {
+    public void initTC() throws IOException {
         workspace = mock(StandalonePluginWorkspace.class);
-        configStore = new ConfigStore(workspace);
+
+        Properties properties = new Properties();
+        properties.load(ConfigTableTest.class
+                .getResourceAsStream("/plugin.properties"));
+
+        configStore = new ConfigStore(workspace, properties);
+
         configStore.setAll(testData);
         table = new ConfigTable(configStore);
         initialLength = configStore.getAll().length;

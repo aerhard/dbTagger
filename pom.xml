@@ -6,6 +6,8 @@
 	<packaging>jar</packaging>
 	<version>1.2.1</version>
 	<name>dbTagger</name>
+    <url>https://github.com/aerhard/dbTagger</url>
+    <description>This oXygen XML Editor plug-in provides pop-up windows to browse database records and paste data into an Author or Text Editor Pane. Request paths, keyboard shortcuts and content insertion templates can be customized in the plug-in's options menu.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -111,12 +113,12 @@
 				</includes>
 				<filtering>true</filtering>
 			</resource>
-			<!-- Add filtered extension.xml to the root of the build folder; oXygen 
+			<!-- Add filtered latest.xml to the root of the build folder; oXygen 
 				will check this file for updates. -->
 			<resource>
 				<directory>src/main/config</directory>
 				<includes>
-					<include>extension.xml</include>
+					<include>latest.xml</include>
 				</includes>
 				<filtering>true</filtering>
 				<targetPath>../update</targetPath>
@@ -136,5 +138,4 @@
 			</properties>
 		</profile>
 	</profiles>
-	<url>https://github.com/aerhard/dbTagger</url>
 </project>

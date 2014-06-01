@@ -1,18 +1,18 @@
 <xt:extensions xmlns:xt="http://www.oxygenxml.com/ns/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.oxygenxml.com/ns/extension http://www.oxygenxml.com/ns/extension/extensions.xsd">
 	<xt:extension id="com.aerhard.oxygen.plugin.dbtagger">
-		<xt:location href="dbtagger-1.2.1-plugin.jar"/>
-		<xt:version>1.2.1</xt:version>
+		<xt:location href="${project.build.finalName}-plugin.jar"/>
+		<xt:version>${project.version}</xt:version>
 		<xt:oxy_version>15.0+</xt:oxy_version>
 		<xt:type>plugin</xt:type>
 		<xt:author>Alexander Erhard</xt:author>
-		<xt:name>dbTagger</xt:name>
+		<xt:name>${project.name}</xt:name>
 		<xt:description><html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
 				<title>Plugin for database driven tagging in oXygen</title>
 			</head>
 			<body>
 				<div>
-					<p>This plugin provides popup windows to browse database records and paste data into an Author or Text Editor Pane. Request paths, keyboard shortcuts and content insertion templates can be customized in the plugin's options menu. </p>
+					<p>${project.description}</p>
 				</div>
 			</body>
 		</html>

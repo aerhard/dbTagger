@@ -14,8 +14,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 
-import com.aerhard.oxygen.plugin.dbtagger.config.ConfigStore;
-
 @RunWith(MockitoJUnitRunner.class)
 public class SearchDialogTest {
 
@@ -28,12 +26,10 @@ public class SearchDialogTest {
     }
 
     private StandalonePluginWorkspace workspace;
-    private ConfigStore configStore;
 
     @Before
     public void initTC() {
         workspace = mock(StandalonePluginWorkspace.class);
-        configStore = new ConfigStore(workspace);
     }
 
     /**
@@ -41,9 +37,8 @@ public class SearchDialogTest {
      */
     @Test
     public void testSearchDialog() {
-        String[] configItem = configStore.getDefaults()[0];
-        @SuppressWarnings("unused")
-        SearchDialog dialog = new SearchDialog(workspace, "", configItem);
+        SearchDialog dialog = new SearchDialog(workspace);
+        dialog.setConfig("", "", "", "", "");
     }
 
 }

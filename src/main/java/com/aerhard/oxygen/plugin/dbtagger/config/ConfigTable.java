@@ -2,7 +2,6 @@ package com.aerhard.oxygen.plugin.dbtagger.config;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.DefaultCellEditor;
@@ -63,10 +62,11 @@ public class ConfigTable extends JTable {
      * Reset the table data to the values currently stored in the config object.
      */
     public void setData() {
-        String[][] data = configStore.getAll();
-        String[][] configItems = Arrays.copyOf(data, data.length);
+        String[][] configItems = configStore.getAll();
 
-        tableModel = createTableModel(configItems);
+        tableModel = new DefaultTableModel(configItems, i18n.getString(
+                "configTable.tableHeaders").split(","));
+
         setModel(tableModel);
         // make sure the currently edited cell gets stored when the user clicks
         // "OK"
@@ -89,37 +89,10 @@ public class ConfigTable extends JTable {
         // column widths
         getColumnModel().getColumn(ConfigStore.ITEM_USER).setPreferredWidth(
                 NARROW_COL_WIDTH);
-        getColumnModel().getColumn(ConfigStore.ITEM_PASSWORD).setPreferredWidth(
-                NARROW_COL_WIDTH);
-        getColumnModel().getColumn(ConfigStore.ITEM_SHORTCUT).setPreferredWidth(
-                NARROW_COL_WIDTH);
-    }
-
-    /**
-     * Creates the table model.
-     * 
-     * @param configItems
-     *            the config items
-     * @return the default table model
-     */
-    private DefaultTableModel createTableModel(String[][] configItems) {
-        String[] tableHeaders = i18n.getString("configTable.tableHeaders")
-                .split(",");
-        return new DefaultTableModel(configItems, tableHeaders) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Class<?> getColumnClass(int column) {
-                Class<?> returnValue;
-                if ((column >= 0) && (column < getColumnCount())) {
-                    returnValue = getValueAt(0, column).getClass();
-                } else {
-                    returnValue = Object.class;
-                }
-                return returnValue;
-            }
-        };
+        getColumnModel().getColumn(ConfigStore.ITEM_PASSWORD)
+                .setPreferredWidth(NARROW_COL_WIDTH);
+        getColumnModel().getColumn(ConfigStore.ITEM_SHORTCUT)
+                .setPreferredWidth(NARROW_COL_WIDTH);
     }
 
     /**

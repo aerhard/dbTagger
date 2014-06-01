@@ -16,14 +16,14 @@ public class TableData {
     /**
      * Instantiates a new table data object.
      * 
-     * @param columnTitles
-     *            the table column titles
-     * @param data
-     *            the table data
+     * @param headers
+     *            the table headers
+     * @param body
+     *            the table body
      */
-    public TableData(String[] columnTitles, String[][] data) {
-        headers = Arrays.copyOf(columnTitles, columnTitles.length);
-        body = (data == null) ? null : Arrays.copyOf(data, data.length);
+    public TableData(String[] headers, String[][] body) {
+        this.headers = Arrays.copyOf(headers, headers.length);
+        this.body = (body == null) ? null : Arrays.copyOf(body, body.length);
     }
 
     /**
@@ -32,7 +32,7 @@ public class TableData {
      * @return the table headers
      */
     public String[] getHeaders() {
-        return headers;
+        return Arrays.copyOf(headers, headers.length);
     }
 
     /**
@@ -41,7 +41,7 @@ public class TableData {
      * @return the table body.
      */
     public String[][] getBody() {
-        return body;
+        return Arrays.copyOf(body, body.length);
     }
 
 }

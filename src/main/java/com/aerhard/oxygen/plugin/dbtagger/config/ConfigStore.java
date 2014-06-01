@@ -23,11 +23,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
-
-import com.aerhard.oxygen.plugin.dbtagger.TaggerPluginExtension;
 
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 import ro.sync.exml.workspace.api.util.UtilAccess;
@@ -82,25 +81,30 @@ public class ConfigStore {
      * 
      * @param workspace
      *            oXygen's workspace object.
+     * @param properties
+     *            the properties loaded from the properties file
      */
-    public ConfigStore(StandalonePluginWorkspace workspace) {
+    public ConfigStore(StandalonePluginWorkspace workspace,
+            Properties properties) {
         this.workspace = workspace;
-        configFilename = TaggerPluginExtension.getProperties().getProperty(
-                "config.filename");
+        configFilename = properties.getProperty("config.filename");
         i18n = ResourceBundle.getBundle("Tagger");
-        loadDefaults();
+
+        loadDefaults(properties.getProperty("config.defaultData"));
         loadUserConfig();
     };
 
     /**
      * Loads the default config from the properties file and writes it to
      * {@link #defaultConfigItems}
+     * 
+     * @param defaultData
+     *            the default config data used when there is no user defined
+     *            data.
      */
-    private void loadDefaults() {
+    private void loadDefaults(String defaultData) {
         try {
-            String defaultsString = TaggerPluginExtension.getProperties()
-                    .getProperty("config.defaultData");
-            String[] rows = defaultsString.split(";");
+            String[] rows = defaultData.split(";");
             int rowsLength = rows.length;
             defaultConfigItems = new String[rowsLength][];
             for (int i = 0; i < rowsLength; i++) {
@@ -147,7 +151,7 @@ public class ConfigStore {
             LOGGER.warn("Class not found. Setting default config.", e);
         }
         if (data == null) {
-            setToDefaults();
+            configItems = defaultConfigItems;
         } else {
             for (int i = 0; i < data.length; i++) {
                 String decrypted = utilAccess
@@ -181,7 +185,7 @@ public class ConfigStore {
             encryptedData = encryptPasswordFields(configItems, utilAccess);
         } catch (Exception e) {
             workspace.showErrorMessage(i18n
-                    .getString("configStore.conversionError"));
+                    .getString("configStore.encryptionError"));
             return;
         }
         String path = getConfigPath();
@@ -239,23 +243,7 @@ public class ConfigStore {
      * @return String[][]
      */
     public String[][] getAll() {
-        return configItems;
-    };
-
-    /**
-     * Sets the config to default.
-     */
-    private void setToDefaults() {
-        configItems = defaultConfigItems;
-    }
-
-    /**
-     * Gets the item of the default config
-     * 
-     * @return String[][]
-     */
-    public String[][] getDefaults() {
-        return defaultConfigItems;
+        return Arrays.copyOf(configItems, configItems.length);
     };
 
     /**

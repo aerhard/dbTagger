@@ -1,0 +1,40 @@
+<xt:extensions xmlns:xt="http://www.oxygenxml.com/ns/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.oxygenxml.com/ns/extension http://www.oxygenxml.com/ns/extension/extensions.xsd">
+	<xt:extension id="com.aerhard.oxygen.plugin.dbtagger">
+		<xt:location href="dbtagger-1.2.1-plugin.jar"/>
+		<xt:version>1.2.1</xt:version>
+		<xt:oxy_version>15.0+</xt:oxy_version>
+		<xt:type>plugin</xt:type>
+		<xt:author>Alexander Erhard</xt:author>
+		<xt:name>dbTagger</xt:name>
+		<xt:description><html xmlns="http://www.w3.org/1999/xhtml">
+			<head>
+				<title>Plug-in for database driven tagging in oXygen</title>
+			</head>
+			<body>
+				<div>
+					<p>This oXygen XML Editor plug-in provides pop-up windows to browse database records and paste data into an Author or Text Editor Pane. Request paths, keyboard shortcuts and content insertion templates can be customized in the plug-in's options menu.</p>
+				</div>
+			</body>
+		</html>
+		</xt:description>
+		<xt:license>
+			<![CDATA[
+			
+Copyright 2013 Alexander Erhard
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+]]></xt:license>
+	</xt:extension>
+</xt:extensions>
+

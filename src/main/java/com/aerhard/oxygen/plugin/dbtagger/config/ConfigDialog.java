@@ -62,19 +62,19 @@ public class ConfigDialog {
     /** The localization resource bundle. */
     private ResourceBundle i18n;
 
-    /** The frame title. */
+    /** The title of the config dialog. */
     private String title;
 
     /**
-     * Instantiates a new config window.
+     * Instantiates a new config dialog.
      * 
      * @param workspace
      *            oXygen's workspace object.
      * @param title
-     *            the frame title
+     *            The title of the dialog.
      */
-    public ConfigDialog(Workspace workspace,
-            ConfigStore configStore, String title) {
+    public ConfigDialog(Workspace workspace, ConfigStore configStore,
+            String title) {
         this.workspace = workspace;
         this.title = title;
         i18n = ResourceBundle.getBundle("Tagger");
@@ -116,7 +116,7 @@ public class ConfigDialog {
         contentPane.setPreferredSize(new Dimension(PREFERRED_WIDTH,
                 PREFERRED_HEIGHT));
         contentPane.setBorder(new EtchedBorder());
-        contentPane.add(createTableActionButtons(), BorderLayout.SOUTH);
+        contentPane.add(createTableButtons(), BorderLayout.SOUTH);
         contentPane.addHierarchyListener(new HierarchyListener() {
             @Override
             public void hierarchyChanged(HierarchyEvent e) {
@@ -133,14 +133,16 @@ public class ConfigDialog {
     }
 
     /**
-     * Creates and initializes the table action buttons.
+     * Creates and initializes the table buttons.
      * 
      * @return a JPanel containing the buttons
      */
-    private JPanel createTableActionButtons() {
+    private JPanel createTableButtons() {
         JButton newButton = new JButton(i18n.getString("configDialog.new"));
-        JButton deleteButton = new JButton(i18n.getString("configDialog.delete"));
-        JButton duplicateButton = new JButton(i18n.getString("configDialog.duplicate"));
+        JButton deleteButton = new JButton(
+                i18n.getString("configDialog.delete"));
+        JButton duplicateButton = new JButton(
+                i18n.getString("configDialog.duplicate"));
         JButton resetButton = new JButton(i18n.getString("configDialog.reset"));
 
         newButton.addActionListener(new ActionListener() {

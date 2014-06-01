@@ -1,6 +1,7 @@
 package com.aerhard.oxygen.plugin.dbtagger;
 
 import java.awt.event.ActionEvent;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -29,9 +30,6 @@ public class TaggerMenu extends Menu {
 
     private static final long serialVersionUID = 1L;
 
-    /** The menu title. */
-    private String title;
-
     /** oXygen's workspace object. */
     private StandalonePluginWorkspace workspace;
 
@@ -44,6 +42,9 @@ public class TaggerMenu extends Menu {
     /** The interface to the current author or editor page. */
     private AbstractPageAccess pageAccess;
 
+    /** The plugin properties loaded from the properties file. */
+    private Properties properties;
+
     /**
      * Instantiates a new tagger menu component.
      * 
@@ -52,12 +53,14 @@ public class TaggerMenu extends Menu {
      * @param title
      *            the menu title
      */
-    TaggerMenu(StandalonePluginWorkspace workspace, String title) {
-        super(title, true);
+    TaggerMenu(StandalonePluginWorkspace workspace, Properties properties) {
+        super(properties.getProperty("plugin.name"), true);
+
         this.workspace = workspace;
-        this.title = title;
-        configStore = new ConfigStore(workspace);
+        this.properties = properties; 
+        
         i18n = ResourceBundle.getBundle("Tagger");
+        configStore = new ConfigStore(workspace, properties);
     }
 
     /**
@@ -134,13 +137,17 @@ public class TaggerMenu extends Menu {
      * @return the results from the search or null if there are no results
      */
     private void openDialog(final String selection, final String[] configItem) {
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                SearchDialog dialog = new SearchDialog(workspace, selection,
-                        configItem);
-                if (dialog.hasValidData()) {
-                    final String[] selectedSearchResult = dialog.showDialog();
+                SearchDialog searchDialog = new SearchDialog(workspace);
+                searchDialog.setConfig(configItem[ConfigStore.ITEM_TITLE],
+                        configItem[ConfigStore.ITEM_USER],
+                        configItem[ConfigStore.ITEM_PASSWORD],
+                        configItem[ConfigStore.ITEM_URL], selection);
+                searchDialog.loadData(selection, true);
+                if (searchDialog.hasValidData()) {
+                    final String[] selectedSearchResult = searchDialog.showDialog();
                     if (selectedSearchResult != null) {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
@@ -152,7 +159,7 @@ public class TaggerMenu extends Menu {
                     }
                 }
             }
-        });
+        }).start();
     }
 
     /**
@@ -185,10 +192,10 @@ public class TaggerMenu extends Menu {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ConfigDialog dialog = new ConfigDialog(workspace, configStore,
-                        title);
+                ConfigDialog configDialog = new ConfigDialog(workspace, configStore,
+                        properties.getProperty("plugin.name"));
 
-                String[][] newConfig = dialog.show();
+                String[][] newConfig = configDialog.show();
                 if (newConfig != null) {
                     configStore.setAll(newConfig);
                     createMenuItems();
