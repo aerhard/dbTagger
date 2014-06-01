@@ -170,8 +170,7 @@ public class SearchDialog extends OKCancelDialog {
     }
 
     /**
-     * Creates the search field pane and adds the provided text to the contained
-     * text field.
+     * Creates the search field pane and its components.
      * 
      * @param text
      *            The text to add.
