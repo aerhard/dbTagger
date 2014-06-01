@@ -8,7 +8,7 @@
 		<xt:name>dbTagger</xt:name>
 		<xt:description><html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
-				<title>Plug-in for database driven tagging in oXygen</title>
+				<title>Plugin for database driven tagging in oXygen</title>
 			</head>
 			<body>
 				<div>
