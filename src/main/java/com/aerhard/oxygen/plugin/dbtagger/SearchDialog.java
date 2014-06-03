@@ -62,7 +62,7 @@ public class SearchDialog extends OKCancelDialog {
 
     private static final long serialVersionUID = 1L;
 
-    /** The preferred height of the config window. */
+    /** The preferred width of the config window. */
     private static final int PREFERRED_WIDTH = 800;
 
     /** The preferred heigth of the config window. */
