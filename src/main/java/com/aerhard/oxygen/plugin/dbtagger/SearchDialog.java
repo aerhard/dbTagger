@@ -308,7 +308,7 @@ public class SearchDialog extends OKCancelDialog {
      *            initial search (based on the selected text in the editor pane)
      *            in a distinct manner.
      */
-    void loadData(String searchString, Boolean isFirst) {
+    public void loadData(String searchString, Boolean isFirst) {
         TableData result = null;
         String response = httpUtil.get(user, password, url, searchString,
                 isFirst);
