@@ -323,7 +323,7 @@ public class SearchDialog extends OKCancelDialog {
         validData = false;
     }
 
-    private void initTableModel(TableData result) {
+    void initTableModel(TableData result) {
         String[][] data = result.getBody();
         String[] titles = result.getHeaders();
 

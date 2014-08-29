@@ -41,7 +41,7 @@ public class TableData {
      * @return the table body.
      */
     public String[][] getBody() {
-        return Arrays.copyOf(body, body.length);
+        return (body == null) ? null : Arrays.copyOf(body, body.length);
     }
 
 }
