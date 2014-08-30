@@ -1,2 +1,2 @@
-/target
-/target/!update/**
+target/*
+!target/update
