@@ -16,8 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import ro.sync.exml.workspace.api.Workspace;
 
 /**
- * Container for the utility function
- * {@link HttpUtil#get(String, String, String, String)}.
+ * Utility functions.
  */
 public class HttpUtil {
 
@@ -59,24 +58,24 @@ public class HttpUtil {
     public String get(String user, String password, String urlOption,
             String searchString, Boolean isFirst) {
         String response = null;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        DefaultHttpClient httpClient = new DefaultHttpClient();
         try {
             String url = urlOption + URLEncoder.encode(searchString, UTF_8);
-            String firstParameter;
+
             if (isFirst) {
-                firstParameter = ((searchString.contains("?") || url
+                url += ((searchString.contains("?") || url
                         .contains("?")) ? "&" : "?") + "first=true";
-            } else {
-                firstParameter = "";
             }
 
-            HttpGet httpGet = new HttpGet(url + firstParameter);
+            HttpGet httpGet = new HttpGet(url);
             if (httpGet != null) {
-                httpGet.addHeader(BasicScheme.authenticate(
-                        new UsernamePasswordCredentials(user, password), UTF_8,
-                        false));
+                if (user != null && password != null) {
+                    httpGet.addHeader(BasicScheme.authenticate(
+                            new UsernamePasswordCredentials(user, password), UTF_8,
+                            false));
+                }
                 ResponseHandler<String> responseHandler = new BasicResponseHandler();
-                response = httpclient.execute(httpGet, responseHandler);
+                response = httpClient.execute(httpGet, responseHandler);
             }
         } catch (UnsupportedEncodingException e) {
             workspace.showErrorMessage(i18n.getString("httpUtil.encodingError")
@@ -88,7 +87,7 @@ public class HttpUtil {
             workspace.showErrorMessage(i18n.getString("httpUtil.IOError")
                     + ":\n" + urlOption + searchString + "\n" + e.toString());
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpClient.getConnectionManager().shutdown();
         }
         return response;
     };

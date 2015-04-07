@@ -1,7 +1,7 @@
 <xt:extensions xmlns:xt="http://www.oxygenxml.com/ns/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.oxygenxml.com/ns/extension http://www.oxygenxml.com/ns/extension/extensions.xsd">
 	<xt:extension id="com.aerhard.oxygen.plugin.dbtagger">
-		<xt:location href="dbtagger-1.2.2-plugin.jar"/>
-		<xt:version>1.2.2</xt:version>
+		<xt:location href="dbtagger-1.2.3-plugin.jar"/>
+		<xt:version>1.2.3</xt:version>
 		<xt:oxy_version>15.0+</xt:oxy_version>
 		<xt:type>plugin</xt:type>
 		<xt:author>Alexander Erhard</xt:author>
