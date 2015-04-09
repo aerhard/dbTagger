@@ -139,13 +139,13 @@ public class TaggerMenu extends Menu {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SearchDialog searchDialog = new SearchDialog(workspace);
-                searchDialog.setConfig(configItem[ConfigStore.ITEM_TITLE],
+                SearchDialog searchDialog = new SearchDialog(workspace,
+                        configItem[ConfigStore.ITEM_TITLE],
                         configItem[ConfigStore.ITEM_USER],
                         configItem[ConfigStore.ITEM_PASSWORD],
-                        configItem[ConfigStore.ITEM_URL], selection);
-                searchDialog.loadData(selection, true);
-                if (searchDialog.hasValidData()) {
+                        configItem[ConfigStore.ITEM_URL],
+                        configItem[ConfigStore.SUB_ITEM_URL], selection);
+                if (searchDialog.load(selection)) {
                     final String[] selectedSearchResult = searchDialog.showDialog();
                     if (selectedSearchResult != null) {
                         SwingUtilities.invokeLater(new Runnable() {

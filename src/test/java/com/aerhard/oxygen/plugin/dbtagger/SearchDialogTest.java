@@ -37,25 +37,8 @@ public class SearchDialogTest {
      */
     @Test
     public void testSearchDialog() {
-        SearchDialog dialog = new SearchDialog(workspace);
-        dialog.setConfig("", "", "", "", "");
+        new SearchDialog(workspace, "", "", "", "", "", "");
     }
 
-    /**
-     * Test Initialization of the table model.
-     */
-    @Test
-    public void testInitTableModel() {
-        
-        // test with no data
-        String[] headers = {"a", "b"};
-        TableData tableData = new TableData(headers, null);
-        
-        SearchDialog dialog = new SearchDialog(workspace);
-        dialog.setConfig("", "", "", "", "");
-        dialog.initTableModel(tableData);
-    }
-    
-    
-    
+
 }

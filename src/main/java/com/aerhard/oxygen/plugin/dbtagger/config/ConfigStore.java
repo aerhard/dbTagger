@@ -40,19 +40,21 @@ public class ConfigStore {
     public static final int ITEM_TITLE = 0;
     /** The index of the URL column. */
     public static final int ITEM_URL = 1;
+    /** The index of the sub item URL column. */
+    public static final int SUB_ITEM_URL = 2;
     /** The index of the user name column. */
-    public static final int ITEM_USER = 2;
+    public static final int ITEM_USER = 3;
     /** The index of the password column. */
-    public static final int ITEM_PASSWORD = 3;
+    public static final int ITEM_PASSWORD = 4;
     /** The index of the source code editor template column. */
-    public static final int ITEM_TEXT_PAGE_TEMPLATE = 4;
+    public static final int ITEM_TEXT_PAGE_TEMPLATE = 5;
     /** The index of the author template column. */
-    public static final int ITEM_AUTHOR_PAGE_TEMPLATE = 5;
+    public static final int ITEM_AUTHOR_PAGE_TEMPLATE = 6;
     /** The index of the shortcut column. */
-    public static final int ITEM_SHORTCUT = 6;
+    public static final int ITEM_SHORTCUT = 7;
 
     /** The length of the config items */
-    public static final int ITEM_LENGTH = 7;
+    public static final int ITEM_LENGTH = 8;
 
     /** The name of the config file used to store the user's config. */
     private String configFilename;
@@ -161,6 +163,7 @@ public class ConfigStore {
             }
             configItems = data;
         }
+        System.out.println(configItems);
     }
 
     /**

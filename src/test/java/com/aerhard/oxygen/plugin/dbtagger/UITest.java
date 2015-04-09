@@ -46,12 +46,12 @@ public class UITest {
     }
     
     public static void openSearchDialog(StandalonePluginWorkspace workspace) {
-        SearchDialog dialog = new SearchDialog(workspace);
 
-        String url = "https://raw.githubusercontent.com/aerhard/dbTagger/master/src/test/json/person.json?property=value";
+        String url = "https://raw.githubusercontent.com/aerhard/dbTagger/dev/src/test/json/work?q=";
+        String subUrl = "https://raw.githubusercontent.com/aerhard/dbTagger/dev/src/test/json/";
         String searchString = "initial search string";
 
-        dialog.setConfig("Test Dialog", null, null, url, searchString);
+        SearchDialog dialog = new SearchDialog(workspace, "Test Dialog", null, null, url, subUrl, searchString);
 
         String[] result = dialog.showDialog();
         LOGGER.info(result);
