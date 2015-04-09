@@ -29,6 +29,7 @@ import ro.sync.exml.workspace.api.Workspace;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -174,19 +175,12 @@ public class SearchDialog extends OKCancelDialog {
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
                     if (!e.getValueIsAdjusting()) {
-
                         int row = mainTable.getSelectedRow();
                         if (row != -1) {
-
                             String key = mainTable.getModel().getValueAt(row, 0)
                                     .toString();
-
                             loadData(subTable, subUrl, key, false);
-
-                            System.out.println(mainTable.getSelectedRow());
                         }
-
-
                     }
                 }
             });
@@ -371,6 +365,10 @@ public class SearchDialog extends OKCancelDialog {
         if (result != null) {
             table.initTableModel(result);
             return true;
+        } else {
+            if (table.getModel() instanceof DefaultTableModel) {
+                ((DefaultTableModel) table.getModel()).setRowCount(0);
+            }
         }
         return false;
     }

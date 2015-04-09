@@ -11,7 +11,7 @@ import java.util.Set;
 public class Table extends JTable {
 
     /** The maximum width of the first row. */
-    private static final int FIRST_ROW_MAX_WIDTH = 50;
+    private static final int FIRST_ROW_MAX_WIDTH = 100;
 
     public Table () {
         setDefaultFocusTraversal();

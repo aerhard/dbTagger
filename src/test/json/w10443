@@ -1,0 +1,18 @@
+{
+  "cols" : [{
+    "name" : "Key"
+  }, {
+    "name" : "Name"
+  }, {
+    "name" : "Description"
+  }],
+  "data" : [[
+    "w10443#ex01",
+    "Macbeth / Fassung II / Partitur",
+    "Strauss"
+  ], [
+     "w10443#ex02",
+     "Macbeth / Fassung III / Partitur",
+     "Strauss"
+   ]]
+}

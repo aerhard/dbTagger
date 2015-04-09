@@ -54,7 +54,12 @@ public class UITest {
         SearchDialog dialog = new SearchDialog(workspace, "Test Dialog", null, null, url, subUrl, searchString);
 
         String[] result = dialog.showDialog();
-        LOGGER.info(result);
+        if (result == null) {
+            LOGGER.info("dialog result is null");
+        } else {
+            LOGGER.info(result[0]);
+        }
+
     }
 
     @Test
