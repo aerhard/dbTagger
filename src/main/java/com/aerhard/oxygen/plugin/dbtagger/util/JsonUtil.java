@@ -48,7 +48,7 @@ public class JsonUtil {
     public JsonUtil(Workspace workspace) {
         this.workspace = workspace;
         i18n = ResourceBundle.getBundle("Tagger");
-    };
+    }
 
     /**
      * Transforms a JSON string to a TableData object.

@@ -80,7 +80,7 @@ public class ConfigDialog {
         i18n = ResourceBundle.getBundle("Tagger");
         table = new ConfigTable(configStore);
         table.setData();
-    };
+    }
 
     /**
      * Shows and evaluates the config dialog.

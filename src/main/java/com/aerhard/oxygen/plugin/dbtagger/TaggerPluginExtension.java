@@ -96,6 +96,6 @@ public class TaggerPluginExtension implements WorkspaceAccessPluginExtension {
     @Override
     public boolean applicationClosing() {
         return true;
-    };
+    }
 
 }

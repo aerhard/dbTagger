@@ -13,8 +13,6 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import ro.sync.exml.workspace.api.Workspace;
-
 import javax.swing.*;
 
 /**
@@ -32,7 +30,7 @@ public class HttpUtil {
      */
     public HttpUtil() {
         i18n = ResourceBundle.getBundle("Tagger");
-    };
+    }
 
     /**
      * Performs an HTTP get request and returns the resulting string or null if
@@ -63,7 +61,6 @@ public class HttpUtil {
             }
 
             HttpGet httpGet = new HttpGet(url);
-            if (httpGet != null) {
                 if (user != null && password != null) {
                     httpGet.addHeader(BasicScheme.authenticate(
                             new UsernamePasswordCredentials(user, password), UTF_8,
@@ -71,7 +68,6 @@ public class HttpUtil {
                 }
                 ResponseHandler<String> responseHandler = new BasicResponseHandler();
                 response = httpClient.execute(httpGet, responseHandler);
-            }
         } catch (UnsupportedEncodingException e) {
             JOptionPane.showMessageDialog(
                     null,
@@ -97,5 +93,5 @@ public class HttpUtil {
             httpClient.getConnectionManager().shutdown();
         }
         return response;
-    };
+    }
 }

@@ -1,5 +1,7 @@
 package com.aerhard.oxygen.plugin.dbtagger;
 
+import com.aerhard.oxygen.plugin.dbtagger.config.ConfigDialog;
+import com.aerhard.oxygen.plugin.dbtagger.config.ConfigStore;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,22 +9,46 @@ import org.mockito.runners.MockitoJUnitRunner;
 import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Properties;
 
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SearchDialogUITest {
+public class UITest {
 
-    private static final Logger LOGGER = Logger.getLogger(SearchDialogUITest.class
+    private static final Logger LOGGER = Logger.getLogger(UITest.class
             .getName());
 
-    public static void openDialog(StandalonePluginWorkspace workspace) {
+    public static void openConfigDialog (StandalonePluginWorkspace workspace) {
+
+        Properties properties = new Properties();
+
+        try {
+            properties.load(ConfigTableTest.class
+                    .getResourceAsStream("/plugin.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ConfigStore configStore = new ConfigStore(workspace, properties);
+        
+        ConfigDialog configDialog = new ConfigDialog(workspace, configStore,
+                properties.getProperty("plugin.name"));
+
+        String[][] newConfig = configDialog.show();
+
+        LOGGER.info(newConfig);
+    }
+    
+    public static void openSearchDialog(StandalonePluginWorkspace workspace) {
         SearchDialog dialog = new SearchDialog(workspace);
 
-        String url = "https://raw.githubusercontent.com/aerhard/dbTagger/master/src/test/json/persons.json?property=value";
+        String url = "https://raw.githubusercontent.com/aerhard/dbTagger/master/src/test/json/person.json?property=value";
         String searchString = "initial search string";
 
         dialog.setConfig("Test Dialog", null, null, url, searchString);
@@ -60,16 +86,26 @@ public class SearchDialogUITest {
 
         JFrame frame = new JFrame("UI Test");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLayout(new GridLayout(1,2));
 
-        JButton openDialogButton = new JButton("Open Dialog");
-        openDialogButton.addActionListener(new ActionListener() {
+        JButton openSearchDialogButton = new JButton("Search Dialog");
+        openSearchDialogButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                openDialog(workspace);
+                openSearchDialog(workspace);
             }
         });
-        frame.add (openDialogButton);
+        frame.add(openSearchDialogButton);
 
+        JButton openConfigDialogButton = new JButton("Config Dialog");
+        openConfigDialogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openConfigDialog(workspace);
+            }
+        });
+        frame.add (openConfigDialogButton);
+        
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

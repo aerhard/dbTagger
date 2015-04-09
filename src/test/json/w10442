@@ -1,0 +1,26 @@
+{
+  "cols" : [{
+    "name" : "Key"
+  }, {
+    "name" : "Name"
+  }, {
+    "name" : "Description"
+  }],
+  "data" : [[
+    "w10442#ex01",
+    "Partitur",
+    "Strauss"
+  ], [
+    "w10442#ex02",
+    "Textbuch",
+    "Strauss"
+  ], [
+    "w10442#ex03",
+    "Klavierauszug",
+    "Singer"
+  ], [
+    "w10442#ex04",
+    "Klavierauszug",
+    "Besl"
+  ]]
+}

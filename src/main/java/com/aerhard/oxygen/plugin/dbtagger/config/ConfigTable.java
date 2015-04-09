@@ -1,5 +1,7 @@
 package com.aerhard.oxygen.plugin.dbtagger.config;
 
+import com.aerhard.oxygen.plugin.dbtagger.ui.Table;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ResourceBundle;
@@ -15,9 +17,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  * The table component of the config dialog, see {@link ConfigDialog}.
  */
-public class ConfigTable extends JTable {
-
-    private static final long serialVersionUID = 1L;
+public class ConfigTable extends Table {
 
     private static final int NARROW_COL_WIDTH = 50;
 
@@ -56,7 +56,7 @@ public class ConfigTable extends JTable {
             }
         }
         return tableData;
-    };
+    }
 
     /**
      * Reset the table data to the values currently stored in the config object.
@@ -136,7 +136,7 @@ public class ConfigTable extends JTable {
             int lastRow = getRowCount() - 1;
             setRowSelectionInterval(lastRow, lastRow);
         }
-    };
+    }
 
     /**
      * Creates the renderer for the password cells in the table.
@@ -163,6 +163,6 @@ public class ConfigTable extends JTable {
                 return this;
             }
         };
-    };
+    }
 
 }

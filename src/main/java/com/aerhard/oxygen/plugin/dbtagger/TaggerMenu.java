@@ -50,8 +50,8 @@ public class TaggerMenu extends Menu {
      * 
      * @param workspace
      *            oXygen's workspace object.
-     * @param title
-     *            the menu title
+     * @param properties
+     *            the plugin properties
      */
     TaggerMenu(StandalonePluginWorkspace workspace, Properties properties) {
         super(properties.getProperty("plugin.name"), true);
@@ -114,7 +114,7 @@ public class TaggerMenu extends Menu {
      * @return the search action
      */
     private Action createSearchAction(final String[] configItem) {
-        Action searchAction = new AbstractAction() {
+        return new AbstractAction() {
 
             private static final long serialVersionUID = 1L;
 
@@ -126,15 +126,14 @@ public class TaggerMenu extends Menu {
                 }
             }
         };
-        return searchAction;
-    };
+    }
 
     /**
      * Opens the search dialog.
      * 
      * @param selection
      *            the selection in the current editor pane
-     * @return the results from the search or null if there are no results
+     * @param configItem the dialog config
      */
     private void openDialog(final String selection, final String[] configItem) {
         new Thread(new Runnable() {
@@ -178,7 +177,7 @@ public class TaggerMenu extends Menu {
         } else {
             return null;
         }
-    };
+    }
 
     /**
      * Creates the action to open the config dialog
@@ -202,6 +201,6 @@ public class TaggerMenu extends Menu {
                 }
             }
         };
-    };
+    }
 
 }

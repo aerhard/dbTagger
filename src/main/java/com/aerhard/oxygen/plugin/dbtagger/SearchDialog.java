@@ -37,13 +37,13 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
+import com.aerhard.oxygen.plugin.dbtagger.ui.Table;
 import com.aerhard.oxygen.plugin.dbtagger.util.HttpUtil;
 import com.aerhard.oxygen.plugin.dbtagger.util.JsonUtil;
 import com.jidesoft.swing.InfiniteProgressPanel;
@@ -81,7 +81,7 @@ public class SearchDialog extends OKCancelDialog {
     private JTextField searchField;
 
     /** The search results table component. */
-    private JTable searchResultsTable;
+    private Table searchResultsTable;
 
     /** The model of the search results table. */
     private DefaultTableModel tableModel;
@@ -172,8 +172,6 @@ public class SearchDialog extends OKCancelDialog {
     /**
      * Creates the search field pane and its components.
      * 
-     * @param text
-     *            The text to add.
      * @return The search field pane.
      */
     private JPanel createSearchFieldPane() {
@@ -201,7 +199,7 @@ public class SearchDialog extends OKCancelDialog {
      * @return The search results pane component.
      */
     private JScrollPane createSearchResultsPane() {
-        searchResultsTable = new JTable();
+        searchResultsTable = new Table();
         JScrollPane searchResultsPane = new JScrollPane(searchResultsTable);
         searchResultsPane.setPreferredSize(new Dimension(PREFERRED_WIDTH,
                 PREFERRED_HEIGHT));
@@ -269,7 +267,7 @@ public class SearchDialog extends OKCancelDialog {
     }
 
     /**
-     * Calls {@link #loadData(String)} in a new thread
+     * Calls loadData(String) in a new thread
      * 
      * @param searchString
      *            The search string.
@@ -333,7 +331,7 @@ public class SearchDialog extends OKCancelDialog {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-            };
+            }
 
         };
         searchResultsTable.setModel(tableModel);
@@ -343,7 +341,7 @@ public class SearchDialog extends OKCancelDialog {
         // key column width
         searchResultsTable.getColumnModel().getColumn(0)
                 .setMaxWidth(FIRST_ROW_MAX_WIDTH);
-    };
+    }
 
     /**
      * Gets the data of the currently selected row.
@@ -362,7 +360,7 @@ public class SearchDialog extends OKCancelDialog {
             return result;
         }
         return null;
-    };
+    }
 
     /**
      * Shows the dialog and returns the value of {@link #getRowData()} if the

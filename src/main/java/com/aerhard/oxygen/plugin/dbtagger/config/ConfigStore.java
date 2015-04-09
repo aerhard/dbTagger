@@ -92,7 +92,7 @@ public class ConfigStore {
 
         loadDefaults(properties.getProperty("config.defaultData"));
         loadUserConfig();
-    };
+    }
 
     /**
      * Loads the default config from the properties file and writes it to
@@ -128,7 +128,7 @@ public class ConfigStore {
     private void loadUserConfig() {
         UtilAccess utilAccess = workspace.getUtilAccess();
         String pathToFile = getConfigPath();
-        String[][] data = null;
+        String[][] data;
         FileInputStream fis;
         try {
             fis = new FileInputStream(pathToFile);
@@ -170,7 +170,7 @@ public class ConfigStore {
      */
     private String getConfigPath() {
         return workspace.getPreferencesDirectory() + "/" + configFilename;
-    };
+    }
 
     /**
      * Stores the config to oXygen's preferences directory.
@@ -180,7 +180,7 @@ public class ConfigStore {
      */
     private void storeUserConfig(String[][] configItems) {
         UtilAccess utilAccess = workspace.getUtilAccess();
-        String[][] encryptedData = null;
+        String[][] encryptedData;
         try {
             encryptedData = encryptPasswordFields(configItems, utilAccess);
         } catch (Exception e) {
@@ -224,7 +224,7 @@ public class ConfigStore {
                     .encrypt(encryptedData[i][ConfigStore.ITEM_PASSWORD]);
         }
         return encryptedData;
-    };
+    }
 
     /**
      * Sets the current config items.
@@ -235,7 +235,7 @@ public class ConfigStore {
     public void setAll(String[][] newConfigItems) {
         configItems = Arrays.copyOf(newConfigItems, newConfigItems.length);
         storeUserConfig(newConfigItems);
-    };
+    }
 
     /**
      * Gets the current config items.
@@ -244,7 +244,7 @@ public class ConfigStore {
      */
     public String[][] getAll() {
         return Arrays.copyOf(configItems, configItems.length);
-    };
+    }
 
     /**
      * Creates an empty config item.
@@ -255,6 +255,6 @@ public class ConfigStore {
         String[] newItem = new String[ConfigStore.ITEM_LENGTH];
         Arrays.fill(newItem, "");
         return newItem;
-    };
+    }
 
 }
