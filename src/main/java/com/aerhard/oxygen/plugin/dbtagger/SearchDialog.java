@@ -128,7 +128,7 @@ public class SearchDialog extends OKCancelDialog {
     public SearchDialog(Workspace workspace) {
         super((Frame) workspace.getParentFrame(), null, true);
         jsonUtil = new JsonUtil(workspace);
-        httpUtil = new HttpUtil(workspace);
+        httpUtil = new HttpUtil();
         i18n = ResourceBundle.getBundle("Tagger");
 
         loadingMask = new InfiniteProgressPanel();

@@ -15,6 +15,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import ro.sync.exml.workspace.api.Workspace;
 
+import javax.swing.*;
+
 /**
  * Utility functions.
  */
@@ -22,20 +24,13 @@ public class HttpUtil {
 
     private static final String UTF_8 = "UTF-8";
 
-    /** oXygen's workspace object. */
-    private Workspace workspace;
-
     /** The localization resource bundle. */
     private ResourceBundle i18n;
 
     /**
      * Instantiates a new HTTP utility object.
-     * 
-     * @param workspace
-     *            the workspace
      */
-    public HttpUtil(Workspace workspace) {
-        this.workspace = workspace;
+    public HttpUtil() {
         i18n = ResourceBundle.getBundle("Tagger");
     };
 
@@ -78,14 +73,26 @@ public class HttpUtil {
                 response = httpClient.execute(httpGet, responseHandler);
             }
         } catch (UnsupportedEncodingException e) {
-            workspace.showErrorMessage(i18n.getString("httpUtil.encodingError")
-                    + ":\n" + urlOption + searchString + "\n" + e.toString());
+            JOptionPane.showMessageDialog(
+                    null,
+                    i18n.getString("httpUtil.encodingError")
+                            + ":\n" + urlOption + searchString + "\n" + e.toString(),
+                    i18n.getString("httpUtil.error"),
+                    JOptionPane.ERROR_MESSAGE);
         } catch (ClientProtocolException e) {
-            workspace.showErrorMessage(i18n.getString("httpUtil.protocolError")
-                    + ":\n" + urlOption + searchString + "\n" + e.toString());
+            JOptionPane.showMessageDialog(
+                    null,
+                    i18n.getString("httpUtil.protocolError")
+                            + ":\n" + urlOption + searchString + "\n" + e.toString(),
+                    i18n.getString("httpUtil.error"),
+                    JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
-            workspace.showErrorMessage(i18n.getString("httpUtil.IOError")
-                    + ":\n" + urlOption + searchString + "\n" + e.toString());
+            JOptionPane.showMessageDialog(
+                    null,
+                    i18n.getString("httpUtil.IOError")
+                            + ":\n" + urlOption + searchString + "\n" + e.toString(),
+                    i18n.getString("httpUtil.error"),
+                    JOptionPane.ERROR_MESSAGE);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }

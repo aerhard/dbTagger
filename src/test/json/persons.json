@@ -1,0 +1,18 @@
+{
+  "cols" : [{
+    "name" : "Key"
+  }, {
+    "name" : "Name"
+  }, {
+    "name" : "Description"
+  }],
+  "data" : [[
+    "id-1",
+    "Mottl",
+    "Conductor"
+  ], [
+    "id-2",
+    "Singer",
+    "Arranger"
+  ]]
+}

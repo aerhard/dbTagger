@@ -4,7 +4,7 @@
 	<groupId>com.aerhard.oxygen.plugin.dbtagger</groupId>
 	<artifactId>dbtagger</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2.3</version>
+	<version>1.2.4</version>
 	<name>dbTagger</name>
     <url>https://github.com/aerhard/dbTagger</url>
     <description>This oXygen XML Editor plug-in provides pop-up windows to browse database records and paste data into an Author or Text Editor Pane. Request paths, keyboard shortcuts and content insertion templates can be customized in the plug-in's options menu.</description>
