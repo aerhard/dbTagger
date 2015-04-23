@@ -63,7 +63,7 @@ The plugin expects the server to return a response in JSON format. The first arr
 
 (See the file `src/test/xql/dbtagger/dbtagger.xql` for a sample server script.)
 
-When a new search window is opened, the plug-in adds the GET parameter `first=true` to the request which will not be added to subsequent search requests from the search field of the dialog. This way, the first request (with the text selected in the editor pane) - can be processed differently than the following requests (with the queries typed by the user). 
+When a new search window is opened, the plug-in adds the GET parameter `first=true` to the request which will not be added to subsequent search requests from the search field of the dialog. This way, the first request can be processed distinctly on the server. I use this feature to strip titles like "Herr", "Frl." etc. from the first query string (which is generated from the selection in the XML document); subsequent queries typed by the user in the search text field get processed without removing these components.
 
 Templates
 -------------------
