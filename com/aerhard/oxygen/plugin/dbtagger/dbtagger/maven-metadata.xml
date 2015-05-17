@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.aerhard.oxygen.plugin.dbtagger</groupId>
+  <artifactId>dbtagger</artifactId>
+  <versioning>
+    <release>1.2.4</release>
+    <versions>
+      <version>1.2.4</version>
+    </versions>
+    <lastUpdated>20150517151142</lastUpdated>
+  </versioning>
+</metadata>
