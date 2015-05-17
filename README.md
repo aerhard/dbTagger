@@ -2,6 +2,11 @@ dbTagger
 ========
 The dbTagger plug-in adds pop-up dialogs to the oXygen XML Editor to facilitate finding identifiers or names (for example, of persons, places, bibliographic records in TEI documents) in local or remote databases and inserting them into XML documents.
 
+Status
+------
+[![Build Status](https://travis-ci.org/aerhard/dbTagger.svg?branch=master)](https://travis-ci.org/aerhard/dbTagger)
+
+
 Features
 --------
 
