@@ -72,6 +72,36 @@
 					<debug>true</debug>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.10</version>
+				<configuration>
+					<message>Maven artifacts for ${project.version}</message>
+					<noJekyll>true</noJekyll>
+					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+					<branch>refs/heads/mvn-repo</branch>
+					<includes><include>**/*</include></includes>
+					<merge>true</merge>
+					<repositoryName>dbTagger</repositoryName>
+					<repositoryOwner>aerhard</repositoryOwner>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -84,38 +114,6 @@
 							<log4j.configuration>log4j.properties</log4j.configuration>
 						</systemPropertyVariables>
 					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.1</version>
-					<configuration>
-						<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>com.github.github</groupId>
-					<artifactId>site-maven-plugin</artifactId>
-					<version>0.8</version>
-					<configuration>
-						<message>Maven artifacts for ${project.version}</message>
-						<noJekyll>true</noJekyll>
-						<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-						<branch>refs/heads/mvn-repo</branch>
-						<merge>true</merge>
-						<includes>
-							<include>**/*</include>
-						</includes>
-						<repositoryName>dbTagger</repositoryName>
-						<repositoryOwner>aerhard</repositoryOwner>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>site</goal>
-							</goals>
-							<phase>deploy</phase>
-						</execution>
-					</executions>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
